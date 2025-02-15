@@ -1,4 +1,4 @@
-package com.api_gateway.demo.controller;
+package com.api_gateway.controller;
 
 public class CandidateServiceController {
 
