@@ -68,7 +68,7 @@ public class AdvertisementController {
         log.info("Creating a new advertisement: {}", request);
         AdvertisementResponse response = advertisementMapper.toResponse(
                 advertisementService.createAdvertisement(
-                        advertisementMapper.toEntity(request)
+                        advertisementMapper.toModel(request)
                 )
         );
         log.debug("Created advertisement: {}", response);
@@ -80,7 +80,7 @@ public class AdvertisementController {
             @PathVariable int id,
             @RequestBody AdvertisementRequest request) {
         log.info("Updating advertisement with id: {}", id);
-        return advertisementService.updateAdvertisement(id, advertisementMapper.toEntity(request))
+        return advertisementService.updateAdvertisement(id, advertisementMapper.toModel(request))
                 .map(advertisementMapper::toResponse)
                 .map(response -> {
                     log.debug("Updated advertisement: {}", response);

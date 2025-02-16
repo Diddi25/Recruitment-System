@@ -1,11 +1,9 @@
 package com.advertisement.dao;
 
-import com.advertisement.domain.Advertisement;
-import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Entity
