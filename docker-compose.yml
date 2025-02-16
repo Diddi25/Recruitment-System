@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/data:/var/lib/postgresql/data"
+      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/init-scripts:/docker-entrypoint-initdb.d"
+    ports:
+      - "5430:5432"
+    restart: always
