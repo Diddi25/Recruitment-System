@@ -53,7 +53,7 @@ public class AdvertisementController {
         return ResponseEntity.ok(
                 advertisementMapper.toResponse(
                         advertisementService.createAdvertisement(
-                                advertisementMapper.toEntity(request)
+                                advertisementMapper.toModel(request)
                         )
                 )
         );
@@ -63,7 +63,7 @@ public class AdvertisementController {
     public ResponseEntity<AdvertisementResponse> updateAdvertisement(
             @PathVariable int id,
             @RequestBody AdvertisementRequest request) {
-        return advertisementService.updateAdvertisement(id, advertisementMapper.toEntity(request))
+        return advertisementService.updateAdvertisement(id, advertisementMapper.toModel(request))
                 .map(advertisementMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

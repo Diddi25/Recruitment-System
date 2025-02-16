@@ -1,6 +1,6 @@
 package com.advertisement.dto;
 
-import com.advertisement.domain.Advertisement;
+import com.advertisement.model.Advertisement;
 import com.advertisement.dto.AdvertisementDto.AdvertisementRequest;
 import com.advertisement.dto.AdvertisementDto.AdvertisementResponse;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdvertisementMapper {
 
-    public Advertisement toEntity(AdvertisementRequest request) {
+    public Advertisement toModel(AdvertisementRequest request) {
         Advertisement advertisement = new Advertisement();
         advertisement.setAdvertisementText(request.getAdvertisementText());
         advertisement.setAssigned(request.getAssigned());

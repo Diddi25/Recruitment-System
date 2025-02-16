@@ -1,10 +1,8 @@
-package com.advertisement.domain;
+package com.advertisement.model;
 
-import com.advertisement.dto.AdvertisementDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor
