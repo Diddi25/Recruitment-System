@@ -1,81 +1,150 @@
 // src/views/TestButtonView.jsx
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { advertisementService } from '../services/api'
 
-export default function TestButtonView() {
-  const response = ref('')
-  const error = ref(null)
-  const loading = ref(false)
+export default {
+  setup() {
+    const advertisements = ref([])
+    const error = ref(null)
+    const loading = ref(false)
+    const showForm = ref(false)
 
-  const handleClick = async () => {
-    loading.value = true
-    error.value = null
+    const formData = ref({
+      advertisementText: '',
+      assigned: '',
+      status: 'unhandled'
+    })
 
-    try {
-      console.log('Making API call...')
-      const result = await fetch('http://localhost:8081/api/advertisements/test', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      console.log('Response status:', result.status)
+    // Hämta alla annonser vid mount
+    onMounted(() => {
+      fetchAdvertisements()
+    })
 
-      if (!result.ok) {
-        throw new Error(`HTTP error! status: ${result.status}`)
+    const fetchAdvertisements = async () => {
+      loading.value = true
+      try {
+        const result = await advertisementService.getAll()
+        advertisements.value = result.data
+      } catch (err) {
+        error.value = `Error fetching advertisements: ${err.message}`
+      } finally {
+        loading.value = false
       }
-
-      const data = await result.json()
-      response.value = JSON.stringify(data, null, 2)
-      console.log('Response data:', data)
-    } catch (err) {
-      console.error('Error:', err)
-      error.value = `Error: ${err.message}`
-    } finally {
-      loading.value = false
     }
-  }
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <button
-        onClick={handleClick}
-        disabled={loading.value}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: loading.value ? 'default' : 'pointer'
-        }}
-      >
-        {loading.value ? 'Loading...' : 'Test API Call'}
+    const handleCreate = async () => {
+      try {
+        await advertisementService.create(formData.value)
+        fetchAdvertisements()
+        showForm.value = false
+        formData.value = { advertisementText: '', assigned: '', status: 'unhandled' }
+      } catch (err) {
+        error.value = `Error creating advertisement: ${err.message}`
+      }
+    }
+
+    const handleUpdate = async (id) => {
+      try {
+        const adToUpdate = advertisements.value.find(ad => ad.id === id)
+        if (!adToUpdate) return
+        await advertisementService.update(id, adToUpdate)
+        fetchAdvertisements()
+      } catch (err) {
+        error.value = `Error updating advertisement: ${err.message}`
+      }
+    }
+
+    const handleDelete = async (id) => {
+      if (confirm('Are you sure you want to delete this advertisement?')) {
+        try {
+          await advertisementService.delete(id)
+          fetchAdvertisements()
+        } catch (err) {
+          error.value = `Error deleting advertisement: ${err.message}`
+        }
+      }
+    }
+
+    const handleStatusUpdate = async (id, newStatus) => {
+      try {
+        await advertisementService.updateStatus(id, { status: newStatus })
+        fetchAdvertisements()
+      } catch (err) {
+        error.value = `Error updating status: ${err.message}`
+      }
+    }
+
+    return {
+      advertisements,
+      error,
+      loading,
+      showForm,
+      formData,
+      fetchAdvertisements,
+      handleCreate,
+      handleUpdate,
+      handleDelete,
+      handleStatusUpdate
+    }
+  },
+
+  template: `
+    <div>
+      <h2>Advertisement Management</h2>
+
+      <button @click="showForm = !showForm">
+        {{ showForm ? 'Cancel' : 'Create New Advertisement' }}
       </button>
 
-      {error.value && (
-        <div style={{
-          marginTop: '20px',
-          color: 'red',
-          padding: '10px',
-          border: '1px solid red',
-          borderRadius: '4px'
-        }}>
-          {error.value}
-        </div>
-      )}
+      <div v-if="showForm">
+        <h3>Create New Advertisement</h3>
+        <form @submit.prevent="handleCreate">
+          <div>
+            <label>Advertisement Text:</label>
+            <br />
+            <input type="text" v-model="formData.advertisementText" required />
+          </div>
+          <br />
+          <div>
+            <label>Assigned To:</label>
+            <br />
+            <input type="text" v-model="formData.assigned" required />
+          </div>
+          <br />
+          <div>
+            <label>Status:</label>
+            <br />
+            <select v-model="formData.status">
+              <option value="unhandled">Unhandled</option>
+              <option value="accepted">Accepted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <br />
+          <button type="submit">Create</button>
+        </form>
+      </div>
 
-      {response.value && (
-        <pre style={{ 
-          marginTop: '20px',
-          padding: '15px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '4px',
-          overflow: 'auto'
-        }}>
-          {response.value}
-        </pre>
-      )}
+      <p v-if="error"><b>Error:</b> {{ error }}</p>
+      <p v-if="loading">Loading...</p>
+
+      <h3>Advertisements</h3>
+      <div v-for="ad in advertisements" :key="ad.id">
+        <hr />
+        <p><b>ID:</b> {{ ad.id }}</p>
+        <p><b>Text:</b> {{ ad.advertisementText }}</p>
+        <p><b>Assigned:</b> {{ ad.assigned }}</p>
+        <p>
+          <b>Status:</b>
+          <select v-model="ad.status" @change="handleStatusUpdate(ad.id, ad.status)">
+            <option value="unhandled">Unhandled</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </p>
+        <button @click="handleUpdate(ad.id)">Update</button>
+        <button @click="handleDelete(ad.id)">Delete</button>
+      </div>
     </div>
-  )
+  `
 }

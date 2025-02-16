@@ -8,7 +8,13 @@ const apiClient = axios.create({
 });
 
 export const advertisementService = {
-  getAll: () => apiClient.get('/advertisements'),
+  getTest: () => apiClient.get('/advertisements/test'),
+  getAll: () => apiClient.get('/advertisements/all'),
+  getById: (id) => apiClient.get(`/advertisements/${id}`),
+  create: (data) => apiClient.post('/advertisements/create', data),
+  update: (id, data) => apiClient.put(`/advertisements/${id}`, data),
+  delete: (id) => apiClient.delete(`/advertisements/${id}`),
+  updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
 export default apiClient;

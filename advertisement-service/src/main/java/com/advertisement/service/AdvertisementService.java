@@ -1,6 +1,5 @@
 package com.advertisement.service;
 
-import com.advertisement.dao.AdvertisementDao;
 import com.advertisement.dao.AdvertisementMapper;
 import com.advertisement.model.Advertisement;
 import com.advertisement.repository.AdvertisementRepository;
