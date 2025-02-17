@@ -1,10 +1,8 @@
 package com.advertisement.dao;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Entity
 @Table(name = "advertisements")
