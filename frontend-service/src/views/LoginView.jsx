@@ -11,6 +11,7 @@ export default function LoginView(props) {
         </input></div>
         <h4>Password</h4>
         <div class="text-input"><input type="text" onInput={onPasswordInput}></input></div>
+        {getIncorrectCredentialsWarning()}
         <button onClick={onSubmit}>Submit</button>
     </div>);
 
@@ -20,6 +21,15 @@ export default function LoginView(props) {
 
     function onPasswordInput(input){
         password = input.target.value;
+    }
+
+    function getIncorrectCredentialsWarning(){
+        if(props.model.flags.incorrectLoginCredentials) {
+            return (<div class="submissionErrorMsg">Incorrect username or password</div>);
+        }
+        else {
+            return <div></div>;
+        }
     }
 
     function onSubmit() {
