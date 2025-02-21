@@ -1,10 +1,10 @@
-/*import ApplicationView from "@/views/ApplicationView";
+import ApplicationView from "@/views/ApplicationView";
 export default function ApplicationPresenter(props) {
     return <div class="main"><ApplicationView/></div>;
-}*/
+}
 
 
-import { ref, onMounted, defineComponent } from "vue";
+/*import { ref, onMounted, defineComponent } from "vue";
 import ApplicationView from "@/views/ApplicationView";
 import { candidateApplicationService } from "../services/api.js";
 
@@ -69,4 +69,4 @@ export default defineComponent({
       </div>
     );
   }
-});
+}); */
