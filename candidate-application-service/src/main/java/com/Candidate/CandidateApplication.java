@@ -1,8 +1,7 @@
-package com.candidate_application_service;
+package com.Candidate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 @SpringBootApplication
 public class CandidateApplication {
 

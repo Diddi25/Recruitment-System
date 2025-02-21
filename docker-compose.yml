@@ -3,14 +3,14 @@ version: "3.8"
 services:
   postgres:
     image: postgres:latest
-    container_name: my_postgres
+    container_name: test_database2
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_PASSWORD: MochiMochi99
+      POSTGRES_DB: CandidateApplication
     volumes:
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/data:/var/lib/postgresql/data"
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/init-scripts:/docker-entrypoint-initdb.d"
+      - "/Users/adalatadiljan/Documents/Docker/postgres/data"
+      - "/Users/adalatadiljan/Documents/Docker/postgres/init-scripts:/docker-entrypoint-initdb.d"
     ports:
       - "5430:5432"
     restart: always

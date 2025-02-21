@@ -17,4 +17,14 @@ export const advertisementService = {
   updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
+// Candidate Application Service API
+export const candidateApplicationService = {
+  applyForPosition: (data) => apiClient.post('/applications', data),
+  getAllApplications: () => apiClient.get('/applications'),
+  getApplicationById: (id) => apiClient.get(`/applications/${id}`)
+};
+
+// Application List Service API
+// (..)
+
 export default apiClient;
