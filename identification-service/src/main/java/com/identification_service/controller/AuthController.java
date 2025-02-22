@@ -1,10 +1,13 @@
 package com.identification_service.controller;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ import com.identification_service.security.jwt.JwtUtils;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/identification")
+@RequestMapping("/api/v1/identification/")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -99,7 +102,7 @@ public class AuthController {
                         break;
                     default:
                         Role userRole = roleRepository.findByName(EnumRoles.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Error: User role for registration is not found."));
                         roles.add(userRole);
                 }
             });

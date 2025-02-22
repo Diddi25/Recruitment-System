@@ -6,6 +6,7 @@ import ApplicationPresenter from '@/presenters/ApplicationPresenter'
 import ApplicationListPresenter from '@/presenters/ApplicationListPresenter'
 import TestButtonPresenter from '@/presenters/TestButtonPresenter'
 import TestLoginPresenter from '@/presenters/TestLoginPresenter'
+import TestRegisterPresenter from '@/presenters/TestRegisterPresenter'
 
 function router(model) {
   return createRouter({
@@ -45,6 +46,11 @@ function router(model) {
         path: '/test-login',
         name: 'test-login',
         component: <TestLoginPresenter model={model}/>
+      },
+      {
+        path: '/test-register',
+        name: 'test-register',
+        component: <TestRegisterPresenter model={model}/>
       },
     ],
   })  
