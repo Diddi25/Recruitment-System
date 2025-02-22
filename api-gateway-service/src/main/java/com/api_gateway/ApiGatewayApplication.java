@@ -20,6 +20,10 @@ public class ApiGatewayApplication {
 						.path("/api/advertisements/**", "/api/advertisements") // Lägg till /api/advertisements utan wildcard
 						.filters(f -> f.rewritePath("/api/advertisements(?:/(?<remaining>.*))?", "/api/v1/advertisements/${remaining}"))
 						.uri("http://localhost:8082"))
+				.route("identification_service", r -> r
+						.path("/api/auth/**", "/api/auth")
+						.filters(f -> f.rewritePath("/api/auth(?:/(?<remaining>.*))?", "/api/auth/${remaining}"))
+						.uri("http://localhost:8083"))
 				.build();
 	}
 

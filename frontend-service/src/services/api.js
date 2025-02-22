@@ -17,4 +17,9 @@ export const advertisementService = {
   updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
+export const identificationService = {
+  login: (data) => apiClient.post('/auth/signin', data),
+  register: (data) => apiClient.post('/auth/signup', data)
+}
+
 export default apiClient;

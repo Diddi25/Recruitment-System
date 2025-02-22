@@ -1,4 +1,5 @@
 import {login} from "./springRequests"
+import { advertisementService, identificationService } from "./services/api";
 export default {
     user: {username: null, password: null, isLoggedIn: null},
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
@@ -7,15 +8,18 @@ export default {
     applications: [{name: "Anna", lastName: "Andersson", status: "unhandled", applicationId: 1}, 
         {name: "Bertil", lastName: "Bengtsson", status: "unhandled", applicationId: 2}],
 
-    async submitLoginCredentials(username, password) {
+    async submitLoginCredentials(user, pass) {
         this.flags.incorrectLoginCredentials = null;
-        let result = await login(username, password);
+        const data = {username: user, password: pass}
+        let result = await identificationService.login(data)
         this.user.isLoggedIn = result.success;
     },
 
     async submitRegistrationInfo(userInfo) {
         this.flags.usernameAlreadyExists = null;
-        console.log("Not yet implemented");
+        const data = {username: userInfo.username, password: userInfo.password, email: userInfo.email, role: ["recruiter"],}
+        let result = await identificationService.register(data)
+
     },
 
     async submitApplication(userInfo) {
