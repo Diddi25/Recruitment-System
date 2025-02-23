@@ -35,9 +35,12 @@ import com.identification_service.repository.RoleRepository;
 import com.identification_service.repository.UserRepository;
 import com.identification_service.security.jwt.JwtUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/v1/identification/")
+@RequestMapping("/api/identification/")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -72,6 +75,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        log.info("start register user");
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }

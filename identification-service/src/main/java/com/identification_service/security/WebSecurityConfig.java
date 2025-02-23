@@ -58,8 +58,8 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                                auth.requestMatchers("/api/v1/identification/register").permitAll()  // Ensure this is permitted
-                                        .requestMatchers("/api/identification/register").permitAll()
+                                auth.requestMatchers("/api/v1/identification/**").permitAll()  // Ensure this is permitted
+                                        .requestMatchers("/api/identification/**").permitAll()
                                         .requestMatchers("/api/test/**").permitAll()
                                         .anyRequest().authenticated()
                 );
