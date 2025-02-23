@@ -1,23 +1,16 @@
-package com.Candidate.dao;
-
-import jakarta.persistence.*;
+package com.candidate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 import java.time.LocalDate;
-import java.util.List;
 
-@Entity
-@Table(name = "candidate_applications")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CandidateApplicationDao {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Builder
+public class CandidateApplicationModel {
+    private int id;
     private String candidateName;
     private String skills;
     private int experienceYears;

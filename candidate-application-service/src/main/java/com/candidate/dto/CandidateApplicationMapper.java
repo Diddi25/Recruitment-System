@@ -1,16 +1,15 @@
-package com.Candidate.dto;
-
-import com.Candidate.model.CandidateApplication;
-import com.Candidate.dto.CandidateApplicationDto.CandidateApplicationRequest;
-import com.Candidate.dto.CandidateApplicationDto.CandidateApplicationResponse;
+package com.candidate.dto;
+import com.candidate.model.CandidateApplicationModel;
+import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationRequest;
+import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CandidateApplicationMapper {
 
     // Convert DTO Request to Entity
-    public CandidateApplication toModel(CandidateApplicationRequest request) {
-        return CandidateApplication.builder()
+    public CandidateApplicationModel toModel(CandidateApplicationRequest request) {
+        return CandidateApplicationModel.builder()
                 .candidateName(request.getCandidateName())
                 .skills(request.getSkills())
                 .experienceYears(request.getExperienceYears())
@@ -20,7 +19,7 @@ public class CandidateApplicationMapper {
     }
 
     // Convert Entity to DTO Response
-    public CandidateApplicationResponse toResponse(CandidateApplication application) {
+    public CandidateApplicationResponse toResponse(CandidateApplicationModel application) {
         CandidateApplicationResponse response = new CandidateApplicationResponse();
         response.setId(application.getId());
         response.setCandidateName(application.getCandidateName());

@@ -1,9 +1,8 @@
-package com.Candidate.dto;
-
+package com.candidate.dto;
 import lombok.Data;
 import java.time.LocalDate;
 
-public class CandidateApplicationDto {
+public class CandidateApplicationDTO {
 
     @Data
     public static class CandidateApplicationRequest {
@@ -16,7 +15,7 @@ public class CandidateApplicationDto {
 
     @Data
     public static class CandidateApplicationResponse {
-        private Long id;
+        private int id;
         private String candidateName;
         private String statusMessage;
     }

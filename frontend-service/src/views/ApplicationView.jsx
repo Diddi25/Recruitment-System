@@ -8,7 +8,7 @@
         <div class="text-input"><input type="text"></input></div>
         <button>Submit</button>
     </div>);
-}*/
+} */
 
 import { ref, onMounted, defineComponent } from 'vue';
 import { candidateApplicationService } from '../services/api.js';
@@ -115,4 +115,3 @@ export default defineComponent({
     );
   }
 });
-
