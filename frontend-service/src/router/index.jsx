@@ -4,7 +4,7 @@ import RegisterPresenter from '@/presenters/RegisterPresenter'
 import LoginPresenter from '@/presenters/LoginPresenter'
 import ApplicationPresenter from '@/presenters/ApplicationPresenter'
 import ApplicationListPresenter from '@/presenters/ApplicationListPresenter'
-import TestButtonPresenter from '@/presenters/TestButtonPresenter'
+import AdRecruiterPresenter from '@/presenters/AdRecruiterPresenter'
 
 function router(model) {
   return createRouter({
@@ -36,9 +36,9 @@ function router(model) {
         component: <ApplicationListPresenter model={model}/>,
       },
       {
-        path: '/test-button',
-        name: 'test-button',
-        component: <TestButtonPresenter model={model}/>
+        path: '/manage-ads',
+        name: 'manage-ads',
+        component: <AdRecruiterPresenter model={model}/>
       },
     ],
   })  

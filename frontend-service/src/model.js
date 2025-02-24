@@ -4,6 +4,7 @@ export default {
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
     errorMessages: {registerSubmission: null, loginSubmission: null},
     jwtToken: null,
+    advertisements: null,
 
     //Test applications
     applications: [{name: "Anna", lastName: "Andersson", status: "unhandled", applicationId: 1}, 
@@ -63,19 +64,40 @@ export default {
     /**
      * 
      */
-    async fetchAdvertisements() {},
+    async fetchAdvertisements() {
+        let result = null;
+        try {
+            result = await advertisementService.getAll();
+            this.advertisements = result.data;
+        } catch (error) {
+
+        } 
+    },
 
     /**
      * 
      */
-    async createAdvertisement() {},
+    async createAdvertisement(formData) {
+        try {
+            await advertisementService.create(formData);
+            fetchAdvertisements();
+
+        } catch (error) {
+
+        }    
+    },
 
     /**
      * 
      * @param {*} id 
      */
-    async updateAdvertisement(id) {
-        
+    async updateAdvertisement(id, adToUpdate) {
+        try {
+            await advertisementService.update(id, adToUpdate);
+            fetchAdvertisements();
+        } catch (error) {
+
+        }    
     },
 
     /**
