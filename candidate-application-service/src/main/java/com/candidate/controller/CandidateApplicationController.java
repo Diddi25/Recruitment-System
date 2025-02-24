@@ -15,7 +15,7 @@ public class CandidateApplicationController {
     private final CandidateApplicationService candidateapplicationservice;
 
     // Get all applications
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
         List<CandidateApplicationDTO.CandidateApplicationResponse> responses = candidateapplicationservice.getAllApplications();
         return ResponseEntity.ok(responses);
@@ -30,7 +30,7 @@ public class CandidateApplicationController {
     }
 
     // Apply for a position
-    @PostMapping
+    @PostMapping("/apply")
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> applyForPosition(
             @RequestBody CandidateApplicationDTO.CandidateApplicationRequest request) {
         CandidateApplicationDTO.CandidateApplicationResponse response = candidateapplicationservice.applyForPosition(request);

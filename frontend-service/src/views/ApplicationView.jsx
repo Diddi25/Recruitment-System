@@ -32,7 +32,7 @@ export default defineComponent({
     // Fetch applications on mount
     onMounted(async () => {
       try {
-        const response = await candidateApplicationService.getAll();
+        const response = await candidateApplicationService.getAllApplications();
         applications.value = response.data;
       } catch (err) {
         error.value = `Error fetching applications: ${err.message}`;
@@ -48,7 +48,7 @@ export default defineComponent({
         formData.value = { candidateName: '', competence: '', experienceYears: '', availableFrom: '', availableTo: '' };
 
         // Refresh applications list after submitting
-        const newResponse = await candidateApplicationService.getAll();
+        const newResponse = await candidateApplicationService.getAllApplications();
         applications.value = newResponse.data;
       } catch (err) {
         error.value = `Error submitting application: ${err.message}`;
