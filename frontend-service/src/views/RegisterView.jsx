@@ -26,8 +26,8 @@ export default function RegisterView(props) {
     </div>);
 
     function getUsernameErrorMsg(){
-        if(props.model.flags.usernameAlreadyExists) {
-            return (<div class="submissionErrorMsg">Username already exists</div>);
+        if(props.model.errorMessages.registerSubmission != null) {
+            return (<div class="submissionErrorMsg">{props.model.errorMessages.registerSubmission}</div>);
         }
         else return(<div></div>);
     }

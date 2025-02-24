@@ -7,6 +7,9 @@ const apiClient = axios.create({
   },
 });
 
+/**
+ * Gateway paths used by the advertisement service
+ */
 export const advertisementService = {
   getTest: () => apiClient.get('/advertisements/test'),
   getAll: () => apiClient.get('/advertisements/all'),
@@ -17,6 +20,9 @@ export const advertisementService = {
   updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
+/**
+ * Gateway paths used by the identification service
+ */
 export const identificationService = {
   login: (data) => apiClient.post('/auth/signin', data),
   register: (data) => apiClient.post('/auth/signup', data)

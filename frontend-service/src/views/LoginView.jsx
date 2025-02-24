@@ -24,8 +24,8 @@ export default function LoginView(props) {
     }
 
     function getIncorrectCredentialsWarning(){
-        if(props.model.flags.incorrectLoginCredentials) {
-            return (<div class="submissionErrorMsg">Incorrect username or password</div>);
+        if(props.model.errorMessages.loginSubmission) {
+            return (<div class="submissionErrorMsg">{props.model.errorMessages.loginSubmission}</div>);
         }
         else {
             return <div></div>;
