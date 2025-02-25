@@ -1,16 +1,129 @@
-version: "3.8"
+# Docker Compose fil för Recruitment applikationen
+# 
+# Hur du använder denna fil:
+#
+# Bygga alla containrar:
+# $ docker-compose build
+#
+# Starta alla tjänster:
+# $ docker-compose up
+#
+# Starta tjänsterna i bakgrunden (detached mode):
+# $ docker-compose up -d
+#
+# Se loggar för alla tjänster:
+# $ docker-compose logs
+#
+# Se loggar för en specifik tjänst:
+# $ docker-compose logs frontend
+#
+# Stoppa alla tjänster:
+# $ docker-compose down
+#
+# Stoppa och ta bort alla containrar och volymer:
+# $ docker-compose down -v
+#
+# För att se status på tjänsterna:
+# $ docker-compose ps
+#
+# För att starta om en specifik tjänst:
+# $ docker-compose restart frontend
+
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: my_postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
-    volumes:
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/data:/var/lib/postgresql/data"
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/init-scripts:/docker-entrypoint-initdb.d"
+  frontend:
+    build: 
+      context: ./frontend-service
+      dockerfile: Dockerfile
+    container_name: workmatch-frontend
     ports:
-      - "5430:5432"
-    restart: always
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8081
+    depends_on:
+      - api-gateway
+
+  # API Gateway som hanterar routing till microservices
+  api-gateway:
+    build: 
+      context: ./api-gateway-service
+      dockerfile: Dockerfile
+    container_name: workmatch-gateway
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://advertisement:8082
+      - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://localhost:5173
+    depends_on:
+      - advertisement
+      - identification
+      - candidate
+
+  # Advertisement service för hantering av annonser
+  advertisement:
+    build: 
+      context: ./advertisement-service
+      dockerfile: Dockerfile
+    container_name: workmatch-advertisement
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - postgres_aws
+
+  # Identification service för autentisering
+  identification:
+    build: 
+      context: ./identification-service
+      dockerfile: Dockerfile
+    container_name: workmatch-identification
+    ports:
+      - "8083:8083"
+    environment:
+      - SERVER_PORT=8083
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - postgres_aws
+
+  # Candidate service för hantering av kandidater
+  candidate:
+    build: 
+      context: ./candidate-service
+      dockerfile: Dockerfile
+    container_name: workmatch-candidate
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - postgres_aws
+
+  # PostgreSQL databas
+  postgres_aws:
+    image: postgres:14-alpine
+    container_name: workmatch-postgres-aws
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=workmatch
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Volymer för persistent data
+volumes:
+  postgres_data:
+    # Detta skapar en namngiven volym som bevarar databasens data
+    # även när containern tas bort
