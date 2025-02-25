@@ -11,9 +11,9 @@ export default {
         {name: "Bertil", lastName: "Bengtsson", status: "unhandled", applicationId: 2}],
 
     /**
-     * Used to log in a user.
+     * Used to authenticate a user.
      * Submits the user-provided login information to the identification service
-     * and displays an error message.
+     * logging in the user, or displays an error message.
      * @param {string} user Username
      * @param {string} pass Password
      */
@@ -62,7 +62,7 @@ export default {
     },
 
     /**
-     * 
+     * Fetches all advertisements from the advertisement service.
      */
     async fetchAdvertisements() {
         let result = null;
@@ -75,7 +75,7 @@ export default {
     },
 
     /**
-     * 
+     * Creates a new advertisement containing the form data.
      */
     async createAdvertisement(formData) {
         try {
@@ -88,7 +88,7 @@ export default {
     },
 
     /**
-     * 
+     * Used to update the content of a specific advertisement.
      * @param {*} id 
      */
     async updateAdvertisement(id, adToUpdate) {
@@ -101,7 +101,7 @@ export default {
     },
 
     /**
-     * 
+     * Used to delete a specific advertisement.
      * @param {*} id 
      */
     async deleteAdvertisement(id) {
@@ -110,13 +110,12 @@ export default {
     },
 
     /**
-     * 
+     * Used to update the status of an advertisement.
      * @param {*} id 
      * @param {*} newStatus 
      */
     async updateAdvertisementStatus(id, newStatus) {
-        await advertisementService.updateStatus(id, { status: newStatus });
-        fetchAdvertisements();
+        await advertisementService.updateStatus(id, newStatus);
     },
 
 }

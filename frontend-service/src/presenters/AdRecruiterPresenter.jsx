@@ -18,7 +18,7 @@ export default function AdRecruiterPresenter(props) {
     }
 
     function onAdStatusUpdate(id, status) {
-        props.model.onAdStatusUpdate(id, status)
+        props.model.updateAdvertisementStatus(id, status)
     }
 
     function onFetchAds() {
