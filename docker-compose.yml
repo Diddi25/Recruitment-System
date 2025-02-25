@@ -1,42 +1,12 @@
-# Docker Compose fil för Recruitment applikationen
-# 
-# Hur du använder denna fil:
-#
-# Bygga alla containrar:
-# $ docker-compose build
-#
-# Starta alla tjänster:
-# $ docker-compose up
-#
-# Starta tjänsterna i bakgrunden (detached mode):
-# $ docker-compose up -d
-#
-# Se loggar för alla tjänster:
-# $ docker-compose logs
-#
-# Se loggar för en specifik tjänst:
-# $ docker-compose logs frontend
-#
-# Stoppa alla tjänster:
-# $ docker-compose down
-#
-# Stoppa och ta bort alla containrar och volymer:
-# $ docker-compose down -v
-#
-# För att se status på tjänsterna:
-# $ docker-compose ps
-#
-# För att starta om en specifik tjänst:
-# $ docker-compose restart frontend
-
+# docker-compose.yml för produktion med images från Docker Hub
+# Med säkra lösenordshantering via miljövariabler
 version: '3.8'
 
 services:
   frontend:
-    build: 
-      context: ./frontend-service
-      dockerfile: Dockerfile
-    container_name: workmatch-frontend
+    image: ${DOCKERHUB_USERNAME}/frontend:latest
+    container_name: frontend
+    restart: always
     ports:
       - "5173:5173"
     environment:
@@ -44,86 +14,79 @@ services:
     depends_on:
       - api-gateway
 
-  # API Gateway som hanterar routing till microservices
   api-gateway:
-    build: 
-      context: ./api-gateway-service
-      dockerfile: Dockerfile
-    container_name: workmatch-gateway
+    image: ${DOCKERHUB_USERNAME}/gateway:latest
+    container_name: gateway
+    restart: always
     ports:
       - "8081:8081"
     environment:
       - SERVER_PORT=8081
       - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://advertisement:8082
+      - SPRING_CLOUD_GATEWAY_ROUTES_1_URI=http://identification:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://candidate:8084
       - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://localhost:5173
     depends_on:
       - advertisement
       - identification
       - candidate
 
-  # Advertisement service för hantering av annonser
   advertisement:
-    build: 
-      context: ./advertisement-service
-      dockerfile: Dockerfile
-    container_name: workmatch-advertisement
+    image: ${DOCKERHUB_USERNAME}/advertisement:latest
+    container_name: advertisement
+    restart: always
     ports:
       - "8082:8082"
     environment:
       - SERVER_PORT=8082
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     depends_on:
       - postgres_aws
 
-  # Identification service för autentisering
   identification:
-    build: 
-      context: ./identification-service
-      dockerfile: Dockerfile
-    container_name: workmatch-identification
+    image: ${DOCKERHUB_USERNAME}/identification:latest
+    container_name: identification
+    restart: always
     ports:
       - "8083:8083"
     environment:
       - SERVER_PORT=8083
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     depends_on:
       - postgres_aws
 
-  # Candidate service för hantering av kandidater
   candidate:
-    build: 
-      context: ./candidate-service
-      dockerfile: Dockerfile
-    container_name: workmatch-candidate
+    image: ${DOCKERHUB_USERNAME}/candidate:latest
+    container_name: candidate
+    restart: always
     ports:
       - "8084:8084"
     environment:
       - SERVER_PORT=8084
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/workmatch
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     depends_on:
       - postgres_aws
 
-  # PostgreSQL databas
   postgres_aws:
     image: postgres:14-alpine
-    container_name: workmatch-postgres-aws
+    container_name: postgres-aws
+    restart: always
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=workmatch
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-# Volymer för persistent data
 volumes:
   postgres_data:
     # Detta skapar en namngiven volym som bevarar databasens data
-    # även när containern tas bort
+    # även när containern tas bort eller startas om
