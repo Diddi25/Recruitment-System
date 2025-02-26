@@ -19,8 +19,8 @@ export const advertisementService = {
 
 // Candidate Application Service API
 export const candidateApplicationService = {
-  applyForPosition: (data) => apiClient.post('/applications', data),
-  getAllApplications: () => apiClient.get('/applications'),
+  applyForPosition: (data) => apiClient.post('/applications/apply', data),
+  getAllApplications: () => apiClient.get('/applications/all'),
   getApplicationById: (id) => apiClient.get(`/applications/${id}`)
 };
 
