@@ -1,9 +1,14 @@
 import ApplicationListView from "@/views/ApplicationListView";
 
 export default function ApplicationListPresenter(props) {
-    return <div class="main"><ApplicationListView model={props.model} viewApplicant={onViewApplicant}/></div>;
+    return <div class="main">
+                <ApplicationListView model={props.model}
+                                     listOfApplications={props.model.advertisement}
+                                     fetchApplications={fetchApplicationsACB}
+                /></div>;
 
-    function onViewApplicant(){
+                function fetchApplicationsACB() {
+                    props.model.fetchAdvertisements();
+                }
 
-    }
 }
