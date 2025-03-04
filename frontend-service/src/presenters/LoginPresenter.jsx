@@ -1,15 +1,15 @@
 import LoginView from "@/views/LoginView";
 import LoginSuccessView from "@/views/LoginSuccessView";
+import { useStore } from "vuex";
+
 
 export default function LoginPresenter(props) {
-    if(props.model.user.isLoggedIn != true) {
-        return <div class="main"><LoginView model={props.model} submitLoginCredentials={onSubmitLoginCredentials}/></div>;
-    }
-    else {
-        return <div class="main"><LoginSuccessView/></div>
-    }
+    const store = useStore();
+    return <div class="main">
+                <LoginView model={props.model} store={store}
+                           reactiveUsername={props.model.username}
+                           reactivePassword={props.model.password}
+                           isLoggedIn={props.model.loggedIn}
 
-    function onSubmitLoginCredentials(username, password) {
-        props.model.submitLoginCredentials(username, password)
-    }
+           /></div>;
 }

@@ -27,13 +27,7 @@ class AuthService {
       username: user.username,
       email: user.email,
       password: user.password
-    }
-    //,{
-    //   headers: {
-    //         Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.VgxI3yV8G3OTtGm7C8zL2A4QX0zBo-F78z7w5HpysBo` // Include token in the request
-    //   }
-    //}
-    );
+    });
   }
 }
 

@@ -2,6 +2,7 @@ import { ref, onMounted } from 'vue'
 import { advertisementService } from './services/api.js'
 
 export default {
+    //Advertisement Service
     advertisement: [],
     advertisementError: null,
     advertisementLoading: false,
@@ -11,7 +12,15 @@ export default {
         assigned: '',
         status: 'unhandled'
     },
+    //Identification Service
+    nameLogin: "Login",
+    nameRegister: "Register",
+    username: '',
+    password: '',
+    //loggedIn = this.$store.state.auth.status.loggedIn,
 
+
+    //Advertisement Service
     async fetchAdvertisements () {
         this.advertisementLoading = true
         try {
