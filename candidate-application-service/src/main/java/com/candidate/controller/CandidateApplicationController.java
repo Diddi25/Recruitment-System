@@ -29,6 +29,7 @@ public class CandidateApplicationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
     // Apply for a position
     @PostMapping("/apply")
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> applyForPosition(
@@ -36,4 +37,5 @@ public class CandidateApplicationController {
         CandidateApplicationDTO.CandidateApplicationResponse response = candidateapplicationservice.applyForPosition(request);
         return ResponseEntity.ok(response);
     }
+
 }

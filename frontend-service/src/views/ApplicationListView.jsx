@@ -1,40 +1,54 @@
+
+import { onMounted } from 'vue' // it's never used in the code
+
 /*export default function ApplicationListView(props) {
-    return (<div>{
-            props.model.applications.map(listApplications)
-        }</div>);
+  
+    function fetchAds() {
+        props.fetchApplications();
+  }
 
-    function listApplications(application){
-        return(<div class="applicationListElement" onClick={onClickApplicant(application.applicationId)}>{application.name + " " + application.lastName + 
-            ", status: " + application.status}</div>);
-    }
-
-    function onClickApplicant(applicationId) {
-        props.viewApplicant(applicationId);
-    }
+  function renderAdvertisement(ad) {
+    return <tr key={ad.id} >
+                <td>{ad.id}</td>
+                <td>{ad.advertisementText}</td>
+                <td>{ad.assigned}</td>
+                <td>{ad.status}</td>
+           </tr>;
+  }
+  return (<div> {
+    <div>
+        <div>
+            <button type="button" onClick={fetchAds}>Click to fetch</button>
+        </div>
+        <div>
+            <table>
+                <tbody>
+                  {
+                    props.listOfApplications.map(renderAdvertisement)
+                  }
+                </tbody>
+            </table>
+        </div>
+    </div>
+} </div>);
 } */
+export default function ApplicationListView(props) {
+  return (
+      <div>
+          <h3>All Applications</h3>
+          {props.applications && props.applications.length > 0 ? (
+              <ul>
+                  {props.applications.map((app) => (
+                      <li key={app.id}>
+                          {app.candidateName} - {app.status || "No status available"}
+                      </li>
+                  ))}
+              </ul>
+          ) : (
+              <p>No applications found.</p>
+          )}
+      </div>
+  );
+}
 
-    export default function ApplicationListView(props) {
-        return (
-            <div>
-                <h2>Lista över ansökningar</h2>
-                {props.model.applications.length > 0 ? (
-                    props.model.applications.map(listApplications)
-                ) : (
-                    <p>Inga ansökningar att visa.</p>
-                )}
-            </div>
-        );
-    
-        function listApplications(application) {
-            return (
-                <div className="applicationListElement" key={application.applicationId} onClick={() => onClickApplicant(application.applicationId)}>
-                    {application.name + " " + application.lastName + ", status: " + application.status}
-                </div>
-            );
-        }
-    
-        function onClickApplicant(applicationId) {
-            props.viewApplicant(applicationId);
-        }
-    }
-    
+

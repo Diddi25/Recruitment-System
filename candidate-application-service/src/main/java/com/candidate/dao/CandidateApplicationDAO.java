@@ -17,6 +17,7 @@ public class CandidateApplicationDAO {
     private int experienceYears;
     private LocalDate availableFrom;
     private LocalDate availableTo;
+    private String status;
 
     public CandidateApplicationDAO(String candidateName, String skills, int experienceYears, LocalDate availableFrom, LocalDate availableTo) {
         this.candidateName = candidateName;
@@ -24,5 +25,6 @@ public class CandidateApplicationDAO {
         this.experienceYears = experienceYears;
         this.availableFrom = availableFrom;
         this.availableTo = availableTo;
+        this.status = status;
     }
 }

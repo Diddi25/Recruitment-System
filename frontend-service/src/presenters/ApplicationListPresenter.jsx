@@ -1,50 +1,39 @@
+/*import ApplicationListView from "@/views/ApplicationListView";
+export default function ApplicationListPresenter(props) {
+  
+  function fetchApplicationsACB() {
+    props.model.fetchAdvertisements();
+  }
+
+  return (
+    <div class="main">
+      <ApplicationListView
+        model={props.model}
+        listOfApplications={props.model.advertisement}
+        fetchApplications={fetchApplicationsACB}
+      />
+    </div>
+  );
+} */
+
 import ApplicationListView from "@/views/ApplicationListView";
+import candidateApplicationModel from "@/candidateApplicationModel";
 
-/*export default function ApplicationListPresenter(props) {
-    return <div className="main"><ApplicationListView model={props.model} viewApplicant={onViewApplicant}/></div>;
+export default function ApplicationListPresenter() {
+  
+  function fetchApplicationsACB() {
+    candidateApplicationModel.fetchApplications();  
+  }
+  function closeApplications() {
+    showApplications.value = false;  // Hide applications when closing, but its currently not used.
+  }
 
-    function onViewApplicant(){
-
-    }
-}*/
-
-import { ref, onMounted, defineComponent } from "vue";
-import { candidateApplicationService } from "../services/api.js";
-
-export default defineComponent({
-  setup() {
-    const applications = ref([
-        { applicationId: 1, name: "Alice", lastName: "Andersson", status: "accepted" },
-        { applicationId: 2, name: "Bob", lastName: "Berg", status: "pending" },
-      ]);
+  return (
+    <div class="main">
+      <button onClick={fetchApplicationsACB}>Fetch Applications</button> 
+      <ApplicationListView applications={candidateApplicationModel.applications.value || []} />
       
-    // Fetch applications from API
-    const fetchApplications = async () => {
-      try {
-        const response = await candidateApplicationService.getAllApplications();
-        applications.value = response.data; // Store applications
-        console.log("Fetched applications:", applications.value);
-      } catch (error) {
-        console.error("Error fetching applications:", error);
-      }
-    };
-
-    const onViewApplicant = (applicationId) => {
-      console.log("Clicked on applicant:", applicationId);
-    };
-
-    onMounted(fetchApplications);
-
-    return {
-      applications,
-      onViewApplicant,
-    };
-  },
-  render() {
-    return (
-      <div className="main">
-        <ApplicationListView model={{ applications: this.applications }} viewApplicant={this.onViewApplicant} />
-      </div>
-    );
-  },
-});
+    </div>
+  );
+}
+  
