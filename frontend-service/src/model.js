@@ -17,7 +17,6 @@ export default {
     nameRegister: "Register",
     username: '',
     password: '',
-    //loggedIn = this.$store.state.auth.status.loggedIn,
 
 
     //Advertisement Service

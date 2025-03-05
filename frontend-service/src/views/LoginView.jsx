@@ -49,13 +49,13 @@ export default function LoginView({store}) {
                 <div>
                     <label htmlFor="username">Username</label>
                     <input type="text"
-                           value={username.value}
+                           value={username}
                            onInput={onUsernameInput} />
                 </div>
                 <div>
                     <label htmlFor="password">Password</label>
                     <input type="password"
-                           value={password.value}
+                           value={password}
                            onInput={onPasswordInput} />
                 </div>
                 <button type="submit" disabled={loading.value}>Login</button>

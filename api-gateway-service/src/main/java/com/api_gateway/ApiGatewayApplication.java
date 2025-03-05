@@ -27,6 +27,7 @@ public class ApiGatewayApplication {
 				.route("identification_service", r -> r
 						.path("/api/identification/**", "/api/identification")
 						.filters(f -> f
+								.rewritePath("/api/identification(?:/(?<remaining>.*))?", "/api/v1/identification/${remaining}")
 								.removeRequestHeader("Cookie") // Ta bort cookies om nödvändigt
 								.preserveHostHeader() // Viktigt för att behålla host-headern
 								.filter((exchange, chain) -> { // Anpassad filter för att vidarebefordra Authorization-headern

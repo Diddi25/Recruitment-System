@@ -1,13 +1,9 @@
 package com.identification_service.controller;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/identification/")
+@RequestMapping("/api/v1/identification/")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -79,7 +75,6 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
-
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         }
@@ -114,7 +109,7 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-
+        log.info("registered successfully");
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }
