@@ -168,7 +168,7 @@ jobs:
               container_name: frontend
               restart: always
               ports:
-                - "5173:80"
+                - "80:80"
               environment:
                 - VITE_API_URL=http://localhost:8081
               depends_on:
@@ -196,10 +196,6 @@ jobs:
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDMETHODS=GET,POST,PUT,DELETE,OPTIONS
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDHEADERS=*
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWCREDENTIALS=true
-              depends_on:
-                - advertisement
-                - identification
-                - candidate
                 
             advertisement:
               image: ${DOCKERHUB_USERNAME}/advertisement:latest
