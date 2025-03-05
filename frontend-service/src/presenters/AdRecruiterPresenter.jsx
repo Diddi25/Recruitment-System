@@ -1,3 +1,7 @@
+/*
+* Is used to submit and display ad submissions.
+*/
+
 import AdRecruiterView from "@/views/AdRecruiterView";
 
 export default function AdRecruiterPresenter(props) {

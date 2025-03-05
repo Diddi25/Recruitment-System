@@ -1,3 +1,6 @@
+/*
+Initializes the reactive model, router and app.
+*/
 import './assets/main.css'
 import { createApp } from 'vue'
 import App from "./presenters/App.jsx"

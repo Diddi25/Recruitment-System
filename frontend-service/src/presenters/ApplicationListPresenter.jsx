@@ -1,3 +1,7 @@
+/*
+* Is used to list all submitted applications.
+*/
+
 import ApplicationListView from "@/views/ApplicationListView";
 
 export default function ApplicationListPresenter(props) {

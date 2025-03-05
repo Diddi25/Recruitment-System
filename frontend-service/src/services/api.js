@@ -1,3 +1,6 @@
+/*
+  Is used to fetch and submit data from/to the gateway service.
+*/
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -27,5 +30,7 @@ export const identificationService = {
   login: (data) => apiClient.post('/auth/signin', data),
   register: (data) => apiClient.post('/auth/signup', data)
 }
+
+
 
 export default apiClient;

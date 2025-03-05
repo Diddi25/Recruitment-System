@@ -1,8 +1,14 @@
+/*
+    The Model contains the current state of the app and is used to fetch and update
+    data using the gateway API.
+*/
+
 import { advertisementService, identificationService } from "./services/api";
+
 export default {
-    user: {username: null, password: null, isLoggedIn: null},
+    user: {username: null, password: null, isLoggedIn: null, role: null},
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
-    errorMessages: {registerSubmission: null, loginSubmission: null},
+    errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null},
     jwtToken: null,
     advertisements: null,
 
@@ -10,6 +16,14 @@ export default {
     applications: [{name: "Anna", lastName: "Andersson", status: "unhandled", applicationId: 1}, 
         {name: "Bertil", lastName: "Bengtsson", status: "unhandled", applicationId: 2}],
 
+
+    getUserRole(roles){
+        if(roles[0] == "ROLE_RECRUITER") {
+            return "recruiter";
+        }
+        return "user";
+    },
+    
     /**
      * Used to authenticate a user.
      * Submits the user-provided login information to the identification service
@@ -28,9 +42,11 @@ export default {
             this.errorMessages.loginSubmission = error.response.data.message;
             return;
         }
-        this.errorMessages.loginSubmission = "Successfully logged in"; 
         this.jwtToken = result.data.accessToken;
+        this.user.role = this.getUserRole(result.data.roles);
+        this.user.isLoggedIn = true;
     },
+
 
     /**
      * Used to register a user.
@@ -39,7 +55,7 @@ export default {
      * @param {*} userInfo 
      */
     async submitRegistrationInfo(userInfo) {
-        const data = {username: userInfo.username, password: userInfo.password, email: userInfo.email, role: ["recruiter"],}
+        const data = {username: userInfo.username, password: userInfo.password, email: userInfo.email, role: ["user"],}
         let result = "";
         try {
             result = await identificationService.register(data);
@@ -118,5 +134,40 @@ export default {
         await advertisementService.updateStatus(id, newStatus);
     },
 
+    /**
+     * 
+     */
+    loginUsernameValidationError(val) {
+        if (val==true) {
+            this.errorMessages.loginSubmission = "Invalid username. The username must be between 3 and 20 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
+
+    /**
+     * 
+     */
+    loginPasswordValidationError(val) {
+        if(val == true) {
+            this.errorMessages.loginSubmission = "Invalid password. The password must be between 6 and 256 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
+
+    fetchAllApplications() {
+
+    },
+
+    fetchApplication() {
+        
+    },
+
+    updateApplication() {
+
+    },
 }
 
