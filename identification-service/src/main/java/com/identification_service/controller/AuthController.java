@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,12 @@ import com.identification_service.repository.RoleRepository;
 import com.identification_service.repository.UserRepository;
 import com.identification_service.security.jwt.JwtUtils;
 
-//@CrossOrigin(origins = "*", maxAge = 3600)
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/identification/")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -51,9 +53,8 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -68,8 +69,9 @@ public class AuthController {
                 .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        log.info("start register user");
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
@@ -100,7 +102,7 @@ public class AuthController {
                         break;
                     default:
                         Role userRole = roleRepository.findByName(EnumRoles.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("Error: User role for registration is not found."));
                         roles.add(userRole);
                 }
             });
@@ -108,7 +110,7 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-
+        log.info("registered successfully");
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

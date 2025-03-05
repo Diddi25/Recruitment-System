@@ -11,7 +11,7 @@ const apiClient = axios.create({
  * Gateway paths used by the advertisement service
  */
 export const advertisementService = {
-  getTest: () => apiClient.get('/advertisements/test'),
+  getTest: () => apiClient.get('/advertisements/test'), //endpoint in AdvertisementController.java
   getAll: () => apiClient.get('/advertisements/all'),
   getById: (id) => apiClient.get(`/advertisements/${id}`),
   create: (data) => apiClient.post('/advertisements/create', data),
