@@ -155,7 +155,6 @@ jobs:
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/app/.env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/app/.env
-          fi
           
           # Kopiera docker-compose.yml till EC2 om den inte finns
           mkdir -p ~/app
