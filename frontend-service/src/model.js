@@ -1,18 +1,11 @@
 import { advertisementService, candidateApplicationService} from "./services/resolvePromise.js";
 import { ref, onMounted } from "vue";
 
-const advertisement = ref([]);
-const advertisementError = ref(null);
-const advertisementLoading = ref(false);
-const applications = ref([]);
-const applicationError = ref(null);
-const applicationLoading = ref(false);
-
 export default {
     //Advertisement
-    advertisement:null,
-    advertisementError:null,
-    advertisementLoading:null,
+    advertisement: [],
+    advertisementError: null,
+    advertisementLoading: false,
     formData: {
         advertisementText: '',
         assigned: '',
@@ -21,8 +14,8 @@ export default {
 
     //CandidateApplication
     applications:[],
-    applicationError:null,
-    applicationLoading:null,
+    applicationError: null,
+    applicationLoading: false,
 
     //Identification Service
     nameLogin: "Login",
@@ -32,14 +25,14 @@ export default {
 
     //Advertisement functions
     async fetchAdvertisements() {
-      advertisementLoading.value = true;
+      this.advertisementLoading = true;
       try {
         let result = await advertisementService.getAll();
-        advertisement.value = result.data;
+        this.advertisement = result.data;
       } catch (err) {
-        advertisementError.value = `Error fetching advertisements: ${err.message}`;
+        this.advertisementError = `Error fetching advertisements: ${err.message}`;
       } finally {
-        advertisementLoading.value = false;
+        this.advertisementLoading = false;
       }
     },
     /**
@@ -64,7 +57,7 @@ export default {
     async updateAdvertisement(id, adToUpdate) {
         try {
             await advertisementService.update(id, adToUpdate);
-            fetchAdvertisements();
+            this.fetchAdvertisements();
         } catch (error) {
 
         }
@@ -99,14 +92,14 @@ export default {
 
     //CandidateApplication functions
     async fetchApplications() {
-      applicationLoading.value = true;
+      applicationLoading = true;
       try {
         const response = await candidateApplicationService.getAllApplications();
-        applications.value = response.data;
+        this.applications = response.data;
       } catch (err) {
-        applicationError.value = `Error fetching applications: ${err.message}`;
+        this.applicationError = `Error fetching applications: ${err.message}`;
       } finally {
-        applicationLoading.value = false;
+        this.applicationLoading = false;
       }
     },
 
