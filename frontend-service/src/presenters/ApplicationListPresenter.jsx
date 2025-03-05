@@ -11,7 +11,7 @@ export default function ApplicationListPresenter(props) {
       }
 
     return (<div class="main">
-                <button onClick={fetchApplicationsACB}>Fetch Applications</button>
+
                 <ApplicationListView model={props.model}
                                      listOfApplications={props.model.advertisement}
                                      fetchApplications={fetchApplicationsACB}
