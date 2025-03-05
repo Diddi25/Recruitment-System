@@ -158,9 +158,9 @@ jobs:
           fi
           
           # Kopiera docker-compose.yml till EC2 om den inte finns
-          if [ ! -f ~/app/docker-compose.yml ]; then
-            mkdir -p ~/app
-            cat > ~/app/docker-compose.yml << 'EOL'
+          mkdir -p ~/app
+          
+          cat > ~/app/docker-compose.yml << 'EOL'
           version: '3.8'
           services:
             frontend:
@@ -256,10 +256,14 @@ jobs:
             postgres_data:
           EOL
           fi
-          
           # Gå till app-mappen
           cd ~/app
-          
+          echo "files in app"
+          ls -la
+          echo "docker-compose"
+          cat docker-compose-yml
+          echo "env"
+          cat .env
           # Hämta senaste images för de tjänster som ska uppdateras
           for service in ${SERVICES_TO_RESTART}; do
             echo "Pulling latest image for $service..."
