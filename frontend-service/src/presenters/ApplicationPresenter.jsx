@@ -1,13 +1,7 @@
-/*import ApplicationView from "@/views/ApplicationView";
-export default function ApplicationPresenter(props) {
-    return <div class="main"><ApplicationView/></div>;
-}*/
-
 import { ref, onMounted } from "vue";
 import ApplicationView from "@/views/ApplicationView";
-import candidateApplicationModel from "@/candidateApplicationModel";
 
-export default function ApplicationPresenter() {
+export default function ApplicationPresenter(props) {
   const showForm = ref(true);
   const successMessage = ref("");
   const error = ref(null);
@@ -26,7 +20,7 @@ export default function ApplicationPresenter() {
     isSubmitting.value = true;
 
     try {
-      const response = await candidateApplicationModel.submitApplication(formData.value);
+      const response = await props.model.submitApplication(formData.value);
       successMessage.value = `Application submitted! ID: ${response.data.id}`;
       error.value = null;
 
@@ -39,7 +33,7 @@ export default function ApplicationPresenter() {
         availableTo: "",
       };
 
-      await candidateApplicationModel.fetchApplications();
+      await props.model.fetchApplications();
     } catch (err) {
       error.value = `Error submitting application: ${err.message}`;
     } finally {
@@ -51,7 +45,7 @@ export default function ApplicationPresenter() {
     showForm.value = !showForm.value;
   }
 
-  onMounted(candidateApplicationModel.fetchApplications); // Fetch applications on mount
+  onMounted(props.model.fetchApplications); // Fetch applications on mount
 
   return (
     <div class="main">
@@ -60,7 +54,7 @@ export default function ApplicationPresenter() {
         toggleForm={toggleForm}
         formData={formData}
         onSubmit={handleSubmit}
-        applications={candidateApplicationModel.applications}
+        applications={props.model.applications}
         error={error}
         successMessage={successMessage}
       />

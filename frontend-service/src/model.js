@@ -1,4 +1,4 @@
-import { advertisementService, identificationService } from "./services/api";
+import { advertisementService, candidateApplicationService} from "./services/resolvePromise.js";
 import { ref, onMounted } from "vue";
 
 const advertisement = ref([]);
@@ -7,8 +7,6 @@ const advertisementLoading = ref(false);
 const applications = ref([]);
 const applicationError = ref(null);
 const applicationLoading = ref(false);
-
-onMounted(fetchAdvertisements);
 
 export default {
     //Advertisement

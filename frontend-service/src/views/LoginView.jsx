@@ -48,14 +48,14 @@ export default function LoginView({store}) {
             <form onSubmit={handleLogin}>
                 <div>
                     <label htmlFor="username">Username</label>
-                    <br>
+                    <br/>
                     <input type="text"
                            value={username}
                            onInput={onUsernameInput} />
                 </div>
                 <div>
                     <label htmlFor="password">Password</label>
-                    <br>
+                    <br />
                     <input type="password"
                            value={password}
                            onInput={onPasswordInput} />
