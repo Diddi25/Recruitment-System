@@ -1,4 +1,4 @@
-package com.candidate_application_service;
+package com.candidate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

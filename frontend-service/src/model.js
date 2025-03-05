@@ -1,4 +1,13 @@
 import { advertisementService, identificationService } from "./services/api";
+import { ref, onMounted } from "vue";
+import { advertisementService } from "@/services/api.js";
+
+const advertisement = ref([]);
+const advertisementError = ref(null);
+const advertisementLoading = ref(false);
+
+onMounted(fetchAdvertisements);
+
 export default {
     user: {username: null, password: null, isLoggedIn: null},
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
@@ -6,6 +15,20 @@ export default {
     jwtToken: null,
     advertisements: null,
 
+    advertisement:null,
+    advertisementError:null,
+    advertisementLoading:null,
+    async fetchAdvertisements() {
+      advertisementLoading.value = true;
+      try {
+        let result = await advertisementService.getAll();
+        advertisement.value = result.data;
+      } catch (err) {
+        advertisementError.value = `Error fetching advertisements: ${err.message}`;
+      } finally {
+        advertisementLoading.value = false;
+      }
+    },
     //Test applications
     applications: [{name: "Anna", lastName: "Andersson", status: "unhandled", applicationId: 1}, 
         {name: "Bertil", lastName: "Bengtsson", status: "unhandled", applicationId: 2}],
@@ -100,6 +123,7 @@ export default {
         }    
     },
 
+
     /**
      * Used to delete a specific advertisement.
      * @param {*} id 
@@ -117,6 +141,5 @@ export default {
     async updateAdvertisementStatus(id, newStatus) {
         await advertisementService.updateStatus(id, newStatus);
     },
-
-}
+  }
 

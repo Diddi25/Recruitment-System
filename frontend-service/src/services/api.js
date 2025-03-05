@@ -20,12 +20,14 @@ export const advertisementService = {
   updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
-/**
- * Gateway paths used by the identification service
- */
-export const identificationService = {
-  login: (data) => apiClient.post('/auth/signin', data),
-  register: (data) => apiClient.post('/auth/signup', data)
-}
+// Candidate Application Service API
+export const candidateApplicationService = {
+  applyForPosition: (data) => apiClient.post('/applications/apply', data),
+  getAllApplications: () => apiClient.get('/applications/all'),
+  getApplicationById: (id) => apiClient.get(`/applications/${id}`)
+};
+
+// Application List Service API
+// (..)
 
 export default apiClient;

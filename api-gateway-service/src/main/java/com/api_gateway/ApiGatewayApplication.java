@@ -24,7 +24,12 @@ public class ApiGatewayApplication {
 						.path("/api/auth/**", "/api/auth")
 						.filters(f -> f.rewritePath("/api/auth(?:/(?<remaining>.*))?", "/api/auth/${remaining}"))
 						.uri("http://localhost:8083"))
+				.route("candidate_application_service", r -> r
+						.path("/api/applications/**", "/api/applications") // Matches all requests to CandidateApplicationController
+						.filters(f -> f.rewritePath("/api/applications(?:/(?<remaining>.*))?", "/api/applications/${remaining}"))
+						.uri("http://localhost:8084")) // Forward requests to Candidate Application Service at port 8084
 				.build();
 	}
+
 
 }
