@@ -5,6 +5,9 @@ import { advertisementService } from "@/services/api.js";
 const advertisement = ref([]);
 const advertisementError = ref(null);
 const advertisementLoading = ref(false);
+const applications = ref([]);
+const applicationError = ref(null);
+const applicationLoading = ref(false);
 
 onMounted(fetchAdvertisements);
 
@@ -18,6 +21,10 @@ export default {
     advertisement:null,
     advertisementError:null,
     advertisementLoading:null,
+    applications:[],
+    applicationError:null,
+    applicationLoading:null,
+
     async fetchAdvertisements() {
       advertisementLoading.value = true;
       try {
@@ -29,10 +36,27 @@ export default {
         advertisementLoading.value = false;
       }
     },
-    //Test applications
-    applications: [{name: "Anna", lastName: "Andersson", status: "unhandled", applicationId: 1}, 
-        {name: "Bertil", lastName: "Bengtsson", status: "unhandled", applicationId: 2}],
-
+    async fetchApplications() {
+      applicationLoading.value = true;
+      try {
+        const response = await candidateApplicationService.getAllApplications();
+        applications.value = response.data;
+      } catch (err) {
+        applicationError.value = `Error fetching applications: ${err.message}`;
+      } finally {
+        applicationLoading.value = false;
+      }
+    },
+    
+    async submitApplication(formData) {
+      console.log("Sending application data to API:", formData); // Debugging log
+      try {
+        const response = await candidateApplicationService.applyForPosition(formData);
+        return response;
+      } catch (err) {
+        throw new Error(`Error submitting application: ${err.message}`);
+      }
+    },
     /**
      * Used to authenticate a user.
      * Submits the user-provided login information to the identification service
