@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRouter } from "vue-router";
@@ -21,17 +21,17 @@ export default function RegisterView({store}) {
     const schema = yup.object().shape({
         name: yup
             .string()
-            .required("First name is required!")
+            .required("Name is required!")
             .min(2, "First name must be at least 2 characters!")
             .max(50, "First name can be up to 50 characters!"),
         lastName: yup
             .string()
-            .required("Last name is required!")
+            .required("Surname is required!")
             .min(2, "Last name must be at least 2 characters!")
             .max(50, "Last name can be up to 50 characters!"),
         personNumber: yup
             .string()
-            .required("Person number is required!")
+            .required("Email is required!")
             .matches(
                 /^[0-9]{10}$/,
                 "Person number must be exactly 10 digits!"
@@ -53,30 +53,35 @@ export default function RegisterView({store}) {
             .max(40, "Password can be up to 40 characters!"),
     });
 
-    const handleRegister = async (user) => {
-        user.name = userInfo.name;
-        user.lastname = userInfo.lastName;
-        user.personNumber = userInfo.personNumber;
-        user.email = userInfo.email;
-        user.username = userInfo.username;
-        user.password = userInfo.password;
-
-        message.value = "";
-        successful.value = false;
-        loading.value = true;
-
-        try {
-            const data = await store.dispatch("auth/register", user);
-            message.value = data.message;
-            successful.value = true;
+    const toLoginACB = async (event) => {
+        if(successful.value) {
             console.log('Registered sucessfully')
+            await nextTick();
+            router.push("/login");
+        }
+    }
+
+    const handleRegister = async (event) => {
+        event.preventDefault();  // Prevent form from reloading
+
+        const user = {
+            name: userInfo.name,
+            lastname: userInfo.lastName,
+            personNumber: userInfo.personNumber,
+            email: userInfo.email,
+            username: userInfo.username,
+            password: userInfo.password
+        };
+
+        loading.value = true;
+        try {
+            await store.dispatch("auth/register", user);
+            console.log('Registered successfully')
             router.push("/login");
         } catch (error) {
-            message.value =
-                error.response?.data?.message || error.message || error.toString();
-            successful.value = false;
-        } finally {
             loading.value = false;
+            message.value = error.response?.data?.message || error.message || error.toString();
+            successful.value = false; // Mark as failed
         }
     };
 
@@ -171,10 +176,9 @@ export default function RegisterView({store}) {
                  {loading.value ? "Loading..." : "Sign Up"}
                </button>
              </form>
-
-             {message.value && (
-               <div className={successful.value ? "success" : "error"}>{message.value}</div>
-             )}
+             <div>
+                 { message.value }
+             </div>
            </div>);
 
 }

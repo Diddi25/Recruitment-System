@@ -22,7 +22,6 @@ export default function LoginView({store}) {
         loading.value = true;
         try {
             await store.dispatch("auth/login", { username: username, password: password });
-            const user = JSON.parse(localStorage.getItem('user'));
             router.push("/login-success")
         } catch (error) {
             loading.value = false;

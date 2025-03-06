@@ -27,6 +27,9 @@ class AuthService {
       username: user.username,
       email: user.email,
       password: user.password,
+    }).then(response => {
+        console.log("Registration response:", response);
+        return response.data;
     });
   }
 }
