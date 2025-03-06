@@ -18,10 +18,6 @@ export default function RegisterView({store}) {
     const successful = ref(false);
     const loggedIn = computed(() => store.state.auth.status.loggedIn);
 
-    if (loggedIn.value) {
-        router.push("/login");
-    }
-
     const schema = yup.object().shape({
         name: yup
             .string()
@@ -73,6 +69,8 @@ export default function RegisterView({store}) {
             const data = await store.dispatch("auth/register", user);
             message.value = data.message;
             successful.value = true;
+            console.log('Registered sucessfully')
+            router.push("/login");
         } catch (error) {
             message.value =
                 error.response?.data?.message || error.message || error.toString();

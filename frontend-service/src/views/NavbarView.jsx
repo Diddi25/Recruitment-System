@@ -6,6 +6,7 @@ export default function NavbarView({store}) {
     const message = ref("");
     const router = useRouter();
     const loggedIn = computed(() => store.state.auth.status.loggedIn);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const logoutACB = async (event) => {
         if(loggedIn.value) {
@@ -19,11 +20,19 @@ export default function NavbarView({store}) {
         }
     }
 
+    function roleBasedAccess() {
+        if(user.roles == "ROLE_USER") {
+            return <RouterLink to="/apply">Apply</RouterLink>;
+        } else {
+            return <RouterLink to="/applications">View applications</RouterLink>;
+        }
+    }
+
     if(loggedIn.value) {
         return (<div class="navbar">
                     <button onClick={logoutACB}>Logout</button>
-                    <RouterLink to="/apply">Apply</RouterLink>
-                    <RouterLink to="/applications">View applications</RouterLink>
+                    <RouterLink to="/login-success">User</RouterLink>
+                    {roleBasedAccess()}
                 </div>)
         ;
     } else {

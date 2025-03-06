@@ -1,3 +1,4 @@
+
 export default function ApplicationView(props) {
       return (
         <div class="apply">
@@ -46,8 +47,6 @@ export default function ApplicationView(props) {
           {/* Error & Success Messages */}
           {props.error.value && <p><b>Error:</b> {props.error.value}</p>}
           {props.successMessage.value && <p><b>{props.successMessage.value}</b></p>}
-    
-
         </div>
       );
 }

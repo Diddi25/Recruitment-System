@@ -17,12 +17,6 @@ export default {
     applicationError: null,
     applicationLoading: false,
 
-    //Identification Service
-    nameLogin: "Login",
-    nameRegister: "Register",
-    username: '',
-    password: '',
-
     //Advertisement functions
     async fetchAdvertisements() {
       this.advertisementLoading = true;

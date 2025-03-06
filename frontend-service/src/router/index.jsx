@@ -4,6 +4,7 @@ import RegisterPresenter from '@/presenters/RegisterPresenter'
 import LoginPresenter from '@/presenters/LoginPresenter'
 import ApplicationPresenter from '@/presenters/ApplicationPresenter'
 import ApplicationListPresenter from '@/presenters/ApplicationListPresenter'
+import LoginSuccessPresenter from '@/presenters/LoginSuccessPresenter'
 import AdRecruiterPresenter from '@/presenters/AdRecruiterPresenter'
 
 function router(model) {
@@ -34,6 +35,11 @@ function router(model) {
         path: '/applications',
         name: 'applications',
         component: <ApplicationListPresenter model={model}/>,
+      },
+      {
+        path: '/login-success',
+        name: 'login-success',
+        component: <LoginSuccessPresenter model={model}/>
       },
       {
         path: '/manage-ads',

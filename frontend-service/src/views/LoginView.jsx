@@ -17,20 +17,16 @@ export default function LoginView({store}) {
 
     const loggedIn = computed(() => store.state.auth.status.loggedIn);
 
-    if (loggedIn.value) {
-        router.push("/apply");
-    }
-
     const handleLogin = async (event) => {
         event.preventDefault();
         loading.value = true;
         try {
             await store.dispatch("auth/login", { username: username, password: password });
-            router.push("/apply");
+            const user = JSON.parse(localStorage.getItem('user'));
+            router.push("/login-success")
         } catch (error) {
             loading.value = false;
-            message.value =
-                error.response?.data?.message || error.message || error.toString();
+            message.value = error.response?.data?.message || error.message || error.toString();
         }
     };
 
