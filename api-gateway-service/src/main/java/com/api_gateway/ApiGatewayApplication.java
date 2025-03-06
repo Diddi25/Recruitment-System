@@ -28,8 +28,6 @@ public class ApiGatewayApplication {
 						.path("/api/identification/**", "/api/identification")
 						.filters(f -> f
 								.rewritePath("/api/identification(?:/(?<remaining>.*))?", "/api/v1/identification/${remaining}")
-								.removeRequestHeader("Cookie") // Ta bort cookies om nödvändigt
-								.preserveHostHeader() // Viktigt för att behålla host-headern
 								.filter((exchange, chain) -> { // Anpassad filter för att vidarebefordra Authorization-headern
 									if (exchange.getRequest().getHeaders().containsKey("Authorization")) {
 										String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
@@ -37,6 +35,7 @@ public class ApiGatewayApplication {
 									}
 									return chain.filter(exchange);
 								})
+								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
 						.uri("http://localhost:8083"))
 				.route("candidate_application_service", r -> r
