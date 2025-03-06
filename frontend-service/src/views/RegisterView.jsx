@@ -53,14 +53,6 @@ export default function RegisterView({store}) {
             .max(40, "Password can be up to 40 characters!"),
     });
 
-    const toLoginACB = async (event) => {
-        if(successful.value) {
-            console.log('Registered sucessfully')
-            await nextTick();
-            router.push("/login");
-        }
-    }
-
     const handleRegister = async (event) => {
         event.preventDefault();  // Prevent form from reloading
 
