@@ -20,8 +20,16 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
-    private String username;
+    @Size(min = 3, max = 20)
+    private String name;
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String surname;
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String personNumber;
 
     @NotBlank
     @Size(max = 50)
@@ -29,7 +37,11 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min = 3, max = 20)
+    private String username;
+
+    @NotBlank
+    @Size(min = 2, max = 150)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -39,9 +51,12 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String name, String surname, String personNumber, String email, String username, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.personNumber = personNumber;
         this.email = email;
+        this.username = username;
         this.password = password;
     }
 
@@ -53,12 +68,28 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPersonNumber() {
+        return personNumber;
+    }
+
+    public void setPersonNumber(String personNumber) {
+        this.personNumber = personNumber;
     }
 
     public String getEmail() {
@@ -67,6 +98,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

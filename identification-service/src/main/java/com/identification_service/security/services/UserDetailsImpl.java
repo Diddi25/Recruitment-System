@@ -17,20 +17,30 @@ public class UserDetailsImpl implements UserDetails {
 
     private Long id;
 
-    private String username;
+    private String name;
+
+    private String surname;
+
+    private String personNumber;
 
     private String email;
+
+    private String username;
 
     @JsonIgnore
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password,
+    public UserDetailsImpl(Long id, String name, String surname, String personNumber,
+                           String email, String username, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.username = username;
+        this.name = name;
+        this.surname = surname;
+        this.personNumber = personNumber;
         this.email = email;
+        this.username = username;
         this.password = password;
         this.authorities = authorities;
     }
@@ -41,8 +51,11 @@ public class UserDetailsImpl implements UserDetails {
                 .collect(Collectors.toList());
 
         return new UserDetailsImpl(user.getId(),
-                user.getUsername(),
+                user.getName(),
+                user.getSurname(),
+                user.getPersonNumber(),
                 user.getEmail(),
+                user.getUsername(),
                 user.getPassword(),
                 authorities);
     }
@@ -56,18 +69,24 @@ public class UserDetailsImpl implements UserDetails {
         return id;
     }
 
+    public String getName() {return name;}
+
+    public String getSurname() {return surname;}
+
+    public String getPersonNumber() {return personNumber;}
+
     public String getEmail() {
         return email;
     }
 
     @Override
-    public String getPassword() {
-        return password;
+    public String getUsername() {
+        return username;
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public String getPassword() {
+        return password;
     }
 
     @Override
