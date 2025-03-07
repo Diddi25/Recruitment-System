@@ -1,16 +1,92 @@
-version: "3.8"
+# docker-compose.yml för produktion med images från Docker Hub
+# Med säkra lösenordshantering via miljövariabler
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: my_postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
-    volumes:
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/data:/var/lib/postgresql/data"
-      - "C:/Users/diddi/OneDrive/Dokument/Docker/postgres/init-scripts:/docker-entrypoint-initdb.d"
-    ports:
-      - "5430:5432"
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/frontend:latest
+    container_name: frontend
     restart: always
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8081
+    depends_on:
+      - api-gateway
+
+  api-gateway:
+    image: ${DOCKERHUB_USERNAME}/gateway:latest
+    container_name: gateway
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://advertisement:8082
+      - SPRING_CLOUD_GATEWAY_ROUTES_1_URI=http://identification:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://candidate:8084
+      - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://localhost:5173
+    depends_on:
+      - advertisement
+      - identification
+      - candidate
+
+  advertisement:
+    image: ${DOCKERHUB_USERNAME}/advertisement:latest
+    container_name: advertisement
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - postgres_aws
+
+  identification:
+    image: ${DOCKERHUB_USERNAME}/identification:latest
+    container_name: identification
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      - SERVER_PORT=8083
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - postgres_aws
+
+  candidate:
+    image: ${DOCKERHUB_USERNAME}/candidate:latest
+    container_name: candidate
+    restart: always
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - postgres_aws
+
+  postgres_aws:
+    image: postgres:14-alpine
+    container_name: postgres-aws
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    # Detta skapar en namngiven volym som bevarar databasens data
+    # även när containern tas bort eller startas om

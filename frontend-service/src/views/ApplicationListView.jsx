@@ -1,14 +1,24 @@
+
 export default function ApplicationListView(props) {
-    return (<div>{
-            props.model.applications.map(listApplications)
-        }</div>);
 
-    function listApplications(application){
-        return(<div class="applicationListElement" onClick={onClickApplicant(application.applicationId)}>{application.name + " " + application.lastName + 
-            ", status: " + application.status}</div>);
+    function fetchAdvertisements() {
+        props.fetchApplications();
     }
-
-    function onClickApplicant(applicationId) {
-        props.viewApplicant(applicationId);
-    }
+  return (
+      <div>
+          <h3>All Applications</h3>
+          <button onClick={fetchAdvertisements}>Fetch Applications</button>
+          {props.listOfApplications && props.listOfApplications.length > 0 ? (
+              <ul>
+                  {props.listOfApplications.map((app) => (
+                      <li key={app.id}>
+                          {app.assigned} - {app.status || "No status available"}
+                      </li>
+                  ))}
+              </ul>
+          ) : (
+              <p>No applications found.</p>
+          )}
+      </div>
+  );
 }

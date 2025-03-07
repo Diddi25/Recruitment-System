@@ -36,12 +36,30 @@ public class ApiGatewayApplication {
 		return builder.routes()
 				.route("advertisement_service", r -> r
 						.path("/api/advertisements/**", "/api/advertisements")
-						.filters(f -> f.rewritePath("/api/advertisements(?:/(?<remaining>.*))?", "/api/v1/advertisements/${remaining}"))
+						.filters(f -> f
+								.rewritePath("/api/advertisements(?:/(?<remaining>.*))?", "/api/v1/advertisements/${remaining}")
+								.removeRequestHeader("Cookie") // Ta bort onödiga cookies om de orsakar problem
+								.preserveHostHeader() // Behåller den ursprungliga host-headern
+						)
 						.uri("http://localhost:8082"))
 				.route("identification_service", r -> r
-						.path("/api/auth/**", "/api/auth")
-						.filters(f -> f.rewritePath("/api/auth(?:/(?<remaining>.*))?", "/api/auth/${remaining}"))
+						.path("/api/identification/**", "/api/identification")
+						.filters(f -> f
+								.rewritePath("/api/identification(?:/(?<remaining>.*))?", "/api/v1/identification/${remaining}")
+								.filter((exchange, chain) -> { // Anpassad filter för att vidarebefordra Authorization-headern
+									if (exchange.getRequest().getHeaders().containsKey("Authorization")) {
+										String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+										exchange.getRequest().mutate().header("Authorization", authHeader);
+									}
+									return chain.filter(exchange);
+								})
+								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
+						)
 						.uri("http://localhost:8083"))
+				.route("candidate_application_service", r -> r
+						.path("/api/applications/**", "/api/applications") // Matches all requests to CandidateApplicationController
+						.filters(f -> f.rewritePath("/api/applications(?:/(?<remaining>.*))?", "/api/applications/${remaining}"))
+						.uri("http://localhost:8084")) // Forward requests to Candidate Application Service at port 8084
 				.build();
 	}
 

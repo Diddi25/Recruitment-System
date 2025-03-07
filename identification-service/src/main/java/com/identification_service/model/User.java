@@ -23,8 +23,16 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
-    private String username;
+    @Size(min = 3, max = 20)
+    private String name;
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String surname;
+
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String personNumber;
 
     @NotBlank
     @Size(max = 50)
@@ -32,7 +40,11 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min = 3, max = 20)
+    private String username;
+
+    @NotBlank
+    @Size(min = 2, max = 150)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -52,9 +64,12 @@ public class User {
      * @param email    the email of the user
      * @param password the password of the user
      */
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String name, String surname, String personNumber, String email, String username, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.personNumber = personNumber;
         this.email = email;
+        this.username = username;
         this.password = password;
     }
 
@@ -81,6 +96,30 @@ public class User {
      *
      * @return the username of the user
      */
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPersonNumber() {
+        return personNumber;
+    }
+
+    public void setPersonNumber(String personNumber) {
+        this.personNumber = personNumber;
+    }
+
     public String getUsername() {
         return username;
     }

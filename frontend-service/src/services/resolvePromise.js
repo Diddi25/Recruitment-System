@@ -7,8 +7,11 @@ const apiClient = axios.create({
   },
 });
 
+/**
+ * Gateway paths used by the advertisement service
+ */
 export const advertisementService = {
-  getTest: () => apiClient.get('/advertisements/test'),
+  getTest: () => apiClient.get('/advertisements/test'), //endpoint in AdvertisementController.java
   getAll: () => apiClient.get('/advertisements/all'),
   getById: (id) => apiClient.get(`/advertisements/${id}`),
   create: (data) => apiClient.post('/advertisements/create', data),
@@ -17,9 +20,14 @@ export const advertisementService = {
   updateStatus: (id, status) => apiClient.put(`/advertisements/${id}/status`, { status })
 };
 
-export const identificationService = {
-  login: (data) => apiClient.post('/auth/signin', data),
-  register: (data) => apiClient.post('/auth/signup', data)
-}
+// Candidate Application Service API
+export const candidateApplicationService = {
+  applyForPosition: (data) => apiClient.post('/applications/apply', data),
+  getAllApplications: () => apiClient.get('/applications/all'),
+  getApplicationById: (id) => apiClient.get(`/applications/${id}`)
+};
+
+// Application List Service API
+// (..)
 
 export default apiClient;

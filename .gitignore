@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+##application.properties
+api-gateway-service/src/main/resources/application.properties
+advertisement-service/src/main/resources/application.properties
+candidate-application-service/src/main/resources/application.properties
+identification-service/src/main/resources/application.properties
+
+
 ### STS ###
 .apt_generated
 .classpath
@@ -62,3 +69,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+/.metadata/

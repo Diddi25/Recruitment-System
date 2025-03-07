@@ -24,12 +24,19 @@ public class UserDetailsImpl implements UserDetails {
 
     private Long id;
 
-    private String username;
+    private String name;
+
+    private String surname;
+
+    private String personNumber;
 
     private String email;
 
+    private String username;
+
     @JsonIgnore
     private String password;
+
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -42,14 +49,19 @@ public class UserDetailsImpl implements UserDetails {
      * @param password    the user's password
      * @param authorities the authorities granted to the user
      */
-    public UserDetailsImpl(Long id, String username, String email, String password,
+    public UserDetailsImpl(Long id, String name, String surname, String personNumber,
+                           String email, String username, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.username = username;
+        this.name = name;
+        this.surname = surname;
+        this.personNumber = personNumber;
         this.email = email;
+        this.username = username;
         this.password = password;
         this.authorities = authorities;
     }
+
 
     /**
      * Builds a {@code UserDetailsImpl} object from a {@link User} entity.
@@ -63,8 +75,11 @@ public class UserDetailsImpl implements UserDetails {
                 .collect(Collectors.toList());
 
         return new UserDetailsImpl(user.getId(),
-                user.getUsername(),
+                user.getName(),
+                user.getSurname(),
+                user.getPersonNumber(),
                 user.getEmail(),
+                user.getUsername(),
                 user.getPassword(),
                 authorities);
     }
@@ -96,6 +111,12 @@ public class UserDetailsImpl implements UserDetails {
     public String getEmail() {
         return email;
     }
+
+    public String getName() {return name;}
+
+    public String getSurname() {return surname;}
+
+    public String getPersonNumber() {return personNumber;}
 
     /**
      * Returns the user's password.
