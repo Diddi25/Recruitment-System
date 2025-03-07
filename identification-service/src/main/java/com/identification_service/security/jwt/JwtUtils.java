@@ -14,6 +14,10 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * This class provides methods for generating, parsing, and validating JWT tokens.
+ * It is used for authentication and authorization in the application.
+ */
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -24,6 +28,12 @@ public class JwtUtils {
     @Value("${recruitment.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    /**
+     * Generates a JWT token for the authenticated user.
+     *
+     * @param authentication the authentication object containing user details
+     * @return the generated JWT token as a string
+     */
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -40,11 +50,24 @@ public class JwtUtils {
         return Keys.secretKeyFor(SignatureAlgorithm.HS256);  
     }
 
+    /**
+     * Extracts the username from a JWT token.
+     *
+     * @param token the JWT token
+     * @return the username contained in the token
+     */
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Checks if the token is correctly signed and not expired.
+     * Logs errors if the token is invalid.
+     *
+     * @param authToken the JWT token to validate
+     * @return {@code true} if the token is valid, otherwise {@code false}
+     */
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);

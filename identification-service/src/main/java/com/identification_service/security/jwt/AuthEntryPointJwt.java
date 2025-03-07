@@ -17,11 +17,24 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * This class implements {@link AuthenticationEntryPoint} to customize responses
+ * when an unauthenticated user attempts to access a secured resource.
+ */
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 
+    /**
+     * Handles authentication errors by returning an HTTP 401 Unauthorized response.
+     *
+     * @param request       the incoming HTTP request
+     * @param response      the HTTP response
+     * @param authException the authentication exception that triggered this handler
+     * @throws IOException      if an I/O error occurs while writing the response
+     * @throws ServletException if a servlet error occurs
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
