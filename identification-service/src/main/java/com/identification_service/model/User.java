@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
  * Represents a user in the system.
  */
 @Entity
-@Table( name = "users",
+@Table( name = "person",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
@@ -20,7 +20,7 @@ import jakarta.validation.constraints.Size;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long personId;
 
     @NotBlank
     @Size(min = 3, max = 20)
@@ -48,7 +48,7 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     /**
@@ -76,19 +76,19 @@ public class User {
     /**
      * Gets the unique identifier for this user.
      *
-     * @return the id of the user
+     * @return the personId of the user
      */
-    public Long getId() {
-        return id;
+    public Long getPersonId() {
+        return personId;
     }
 
     /**
      * Sets the unique identifier for this user.
      *
-     * @param id the id to set for the user
+     * @param personId the personId to set for the user
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
     /**
