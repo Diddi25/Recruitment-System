@@ -284,8 +284,12 @@ jobs:
           echo "docker-compose.yml contents:"
           cat docker-compose.yml
           
-          echo "env file contents (secrets masked):"
-          cat .env | sed 's/=.*/=********/'
+          echo "env file contents:"
+          cat .env
+          docker ps -a
+          echo "SERVICES_TO_RESTART"
+          ${SERVICES_TO_RESTART}
+          $service
           
           # Hämta senaste images för de tjänster som ska uppdateras
           echo "Pulling latest images for services: ${SERVICES_TO_RESTART}"
