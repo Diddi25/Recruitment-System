@@ -136,10 +136,26 @@ jobs:
       run: |
         echo "SERVICES_TO_RESTART=$(
           if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"frontend \"; fi
+          if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"api-gateway \"; fi
+          if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"advertisement \"; fi
+          if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"identification \"; fi
+          if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"candidate \"; fi
+        )" >> $GITHUB_ENV
+        
+        echo "CONTAINER_NAMES=$(
+          if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"frontend \"; fi
           if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"gateway \"; fi
           if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"advertisement \"; fi
           if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"identification \"; fi
           if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"candidate \"; fi
+        )" >> $GITHUB_ENV
+        
+        echo "IMAGE_NAMES=$(
+          if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest \"; fi
+          if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest \"; fi
+          if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest \"; fi
+          if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/identification:latest \"; fi
+          if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest \"; fi
         )" >> $GITHUB_ENV
 
     - name: Deploy to EC2
@@ -149,16 +165,42 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # Skapa .env fil med alla secrets om den inte finns
-          if [ ! -f ~/app/.env ]; then
-            mkdir -p ~/app
-            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/app/.env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/app/.env
+          # Skapa backup-mapp för säkerhetskopior
+          mkdir -p ~/app/backups
+          timestamp=$(date +%Y%m%d_%H%M%S)
           
-          # Kopiera docker-compose.yml till EC2 om den inte finns
+          # Skapa backup av befintliga filer om de finns
+          if [ -f ~/app/docker-compose.yml ]; then
+            cp ~/app/docker-compose.yml ~/app/backups/docker-compose.yml.$timestamp
+          fi
+          
+          if [ -f ~/app/.env ]; then
+            cp ~/app/.env ~/app/backups/.env.$timestamp
+          fi
+          
+          # Gå till app-mappen
           mkdir -p ~/app
+          cd ~/app
           
+          # Stoppa och ta bort specifika containers som ska uppdateras
+          for container in ${CONTAINER_NAMES}; do
+            echo "Stopping and removing container: $container"
+            docker stop $container 2>/dev/null || true
+            docker rm $container 2>/dev/null || true
+          done
+          
+          # Ta bort specifika Docker images som ska uppdateras
+          for image in ${IMAGE_NAMES}; do
+            echo "Removing image: $image"
+            docker rmi $image 2>/dev/null || true
+          done
+          
+          # Skapa ny .env fil med alla secrets
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/app/.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/app/.env
+          
+          # Skapa ny docker-compose.yml fil
           cat > ~/app/docker-compose.yml << 'EOL'
           version: '3.8'
           services:
@@ -254,25 +296,32 @@ jobs:
           volumes:
             postgres_data:
           EOL
-          fi
-          # Gå till app-mappen
-          cd ~/app
-          echo "files in app"
+          
+          echo "Files in app directory:"
           ls -la
-          echo "docker-compose"
-          cat docker-compose-yml
-          echo "env"
-          cat .env
+          
+          echo "docker-compose.yml contents:"
+          cat docker-compose.yml
+          
+          echo "env file contents (secrets masked):"
+          cat .env | sed 's/=.*/=********/'
+          
           # Hämta senaste images för de tjänster som ska uppdateras
+          echo "Pulling latest images for services: ${SERVICES_TO_RESTART}"
           for service in ${SERVICES_TO_RESTART}; do
             echo "Pulling latest image for $service..."
             docker-compose pull $service
           done
           
           # Starta om endast de tjänster som ska uppdateras
+          echo "Starting services: ${SERVICES_TO_RESTART}"
           for service in ${SERVICES_TO_RESTART}; do
-            echo "Restarting $service..."
+            echo "Starting $service..."
             docker-compose up -d --no-deps $service
           done
           
-          echo "Deployment complete for services: ${SERVICES_TO_RESTART}"
+          # Visa status för alla containers
+          echo "Current docker containers status:"
+          docker ps
+          
+          echo "Deployment completed for services: ${SERVICES_TO_RESTART}"
