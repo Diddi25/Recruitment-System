@@ -164,6 +164,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        envs: SERVICES_TO_RESTART,CONTAINER_NAMES,IMAGE_NAMES
         script: |
           # Skapa backup-mapp för säkerhetskopior
           mkdir -p ~/app/backups
@@ -182,22 +183,19 @@ jobs:
           mkdir -p ~/app
           cd ~/app
           
-          # Stoppa och ta bort specifika containers som ska uppdateras
-          for container in ${CONTAINER_NAMES}; do
+          IFS=' ' read -ra CONTAINERS <<< "${CONTAINER_NAMES}"
+          for container in "${CONTAINERS[@]}"; do
             echo "Stopping and removing container: $container"
             docker stop $container 2>/dev/null || true
             docker rm $container 2>/dev/null || true
           done
           
-          # Ta bort specifika Docker images som ska uppdateras
-          for image in ${IMAGE_NAMES}; do
+          IFS=' ' read -ra IMAGES <<< "${IMAGE_NAMES}"
+          for image in "${IMAGES[@]}"; do
             echo "Removing image: $image"
             docker rmi $image 2>/dev/null || true
           done
           
-          # The credentials are hardcoded here for your development environment
-          # For a production environment, consider using secrets instead
-          # Create environment file if it doesn't exist (for other environment variables)
           if [ ! -f ~/app/.env ]; then
             mkdir -p ~/app
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
@@ -285,28 +283,28 @@ jobs:
           cat docker-compose.yml
           
           echo "env file contents:"
-          cat .env
-          docker ps -a
-          echo "SERVICES_TO_RESTART"
-          ${SERVICES_TO_RESTART}
-          $service
+          cat .env 
           
           # Hämta senaste images för de tjänster som ska uppdateras
           echo "Pulling latest images for services: ${SERVICES_TO_RESTART}"
-          for service in ${SERVICES_TO_RESTART}; do
+          # Split the space-separated service names into an array and process each one
+          IFS=' ' read -ra SERVICES <<< "${SERVICES_TO_RESTART}"
+          for service in "${SERVICES[@]}"; do
             echo "Pulling latest image for $service..."
             docker-compose pull $service
           done
           
           # Starta om endast de tjänster som ska uppdateras
           echo "Starting services: ${SERVICES_TO_RESTART}"
-          for service in ${SERVICES_TO_RESTART}; do
+          # Split the space-separated service names into an array and process each one
+          IFS=' ' read -ra SERVICES <<< "${SERVICES_TO_RESTART}"
+          for service in "${SERVICES[@]}"; do
             echo "Starting $service..."
             docker-compose up -d --no-deps $service
           done
           
           # Visa status för alla containers
           echo "Current docker containers status:"
-          docker ps
+          docker ps -a
           
           echo "Deployment completed for services: ${SERVICES_TO_RESTART}"
