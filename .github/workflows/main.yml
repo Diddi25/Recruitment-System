@@ -195,10 +195,13 @@ jobs:
             docker rmi $image 2>/dev/null || true
           done
           
-          # Skapa ny .env fil med alla secrets
-          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/app/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/app/.env
+          # The credentials are hardcoded here for your development environment
+          # For a production environment, consider using secrets instead
+          # Create environment file if it doesn't exist (for other environment variables)
+          if [ ! -f ~/app/.env ]; then
+            mkdir -p ~/app
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
+          fi
           
           # Skapa ny docker-compose.yml fil
           cat > ~/app/docker-compose.yml << 'EOL'
@@ -212,8 +215,6 @@ jobs:
                 - "80:80"
               environment:
                 - VITE_API_URL=http://localhost:8081
-              depends_on:
-                - api-gateway
               
             api-gateway:
               image: ${DOCKERHUB_USERNAME}/gateway:latest
@@ -246,11 +247,9 @@ jobs:
                 - "8082:8082"
               environment:
                 - SERVER_PORT=8082
-                - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
-                - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-                - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-              depends_on:
-                - postgres_aws
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
                 
             identification:
               image: ${DOCKERHUB_USERNAME}/identification:latest
@@ -260,11 +259,9 @@ jobs:
                 - "8083:8083"
               environment:
                 - SERVER_PORT=8083
-                - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
-                - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-                - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-              depends_on:
-                - postgres_aws
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
                 
             candidate:
               image: ${DOCKERHUB_USERNAME}/candidate:latest
@@ -274,27 +271,11 @@ jobs:
                 - "8084:8084"
               environment:
                 - SERVER_PORT=8084
-                - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_aws:5432/mydb
-                - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-                - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-              depends_on:
-                - postgres_aws
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
                 
-            postgres_aws:
-              image: postgres:14-alpine
-              container_name: postgres-aws
-              restart: always
-              ports:
-                - "5432:5432"
-              environment:
-                - POSTGRES_DB=mydb
-                - POSTGRES_USER=${DB_USERNAME}
-                - POSTGRES_PASSWORD=${DB_PASSWORD}
-              volumes:
-                - postgres_data:/var/lib/postgresql/data
-                
-          volumes:
-            postgres_data:
+            # AWS RDS is used instead of a local postgres container
           EOL
           
           echo "Files in app directory:"
