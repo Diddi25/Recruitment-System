@@ -134,29 +134,52 @@ jobs:
 
     - name: Prepare services list for EC2
       run: |
-        echo "SERVICES_TO_RESTART=$(
-          if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"frontend \"; fi
-          if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"api-gateway \"; fi
-          if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"advertisement \"; fi
-          if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"identification \"; fi
-          if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"candidate \"; fi
-        )" >> $GITHUB_ENV
+        SERVICES=""
+        CONTAINERS=""
+        IMAGES=""
         
-        echo "CONTAINER_NAMES=$(
-          if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"frontend \"; fi
-          if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"gateway \"; fi
-          if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"advertisement \"; fi
-          if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"identification \"; fi
-          if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"candidate \"; fi
-        )" >> $GITHUB_ENV
+        if [ "$DEPLOY_FRONTEND" = "true" ]; then 
+          SERVICES="$SERVICES frontend"
+          CONTAINERS="$CONTAINERS frontend"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest"
+        fi
         
-        echo "IMAGE_NAMES=$(
-          if [ \"$DEPLOY_FRONTEND\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest \"; fi
-          if [ \"$DEPLOY_GATEWAY\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest \"; fi
-          if [ \"$DEPLOY_ADVERTISEMENT\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest \"; fi
-          if [ \"$DEPLOY_IDENTIFICATION\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/identification:latest \"; fi
-          if [ \"$DEPLOY_CANDIDATE\" = \"true\" ]; then echo -n \"${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest \"; fi
-        )" >> $GITHUB_ENV
+        if [ "$DEPLOY_GATEWAY" = "true" ]; then 
+          SERVICES="$SERVICES api-gateway"
+          CONTAINERS="$CONTAINERS gateway"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest"
+        fi
+        
+        if [ "$DEPLOY_ADVERTISEMENT" = "true" ]; then 
+          SERVICES="$SERVICES advertisement"
+          CONTAINERS="$CONTAINERS advertisement"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest"
+        fi
+        
+        if [ "$DEPLOY_IDENTIFICATION" = "true" ]; then 
+          SERVICES="$SERVICES identification"
+          CONTAINERS="$CONTAINERS identification"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/identification:latest"
+        fi
+        
+        if [ "$DEPLOY_CANDIDATE" = "true" ]; then 
+          SERVICES="$SERVICES candidate"
+          CONTAINERS="$CONTAINERS candidate"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest"
+        fi
+        
+        # Trim leading spaces
+        SERVICES=$(echo $SERVICES | xargs)
+        CONTAINERS=$(echo $CONTAINERS | xargs)
+        IMAGES=$(echo $IMAGES | xargs)
+        
+        echo "SERVICES=$SERVICES" >> $GITHUB_ENV
+        echo "CONTAINERS=$CONTAINERS" >> $GITHUB_ENV
+        echo "IMAGES=$IMAGES" >> $GITHUB_ENV
+        
+        echo "Services to deploy: $SERVICES"
+        echo "Containers to remove: $CONTAINERS"
+        echo "Images to update: $IMAGES"
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
@@ -164,7 +187,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        envs: SERVICES_TO_RESTART,CONTAINER_NAMES,IMAGE_NAMES
+        envs: SERVICES,CONTAINERS,IMAGES
         script: |
           # Skapa backup-mapp för säkerhetskopior
           mkdir -p ~/app/backups
@@ -183,15 +206,15 @@ jobs:
           mkdir -p ~/app
           cd ~/app
           
-          IFS=' ' read -ra CONTAINERS <<< "${CONTAINER_NAMES}"
-          for container in "${CONTAINERS[@]}"; do
+          # Stoppa och ta bort specifika containers som ska uppdateras
+          for container in $CONTAINERS; do
             echo "Stopping and removing container: $container"
             docker stop $container 2>/dev/null || true
             docker rm $container 2>/dev/null || true
           done
           
-          IFS=' ' read -ra IMAGES <<< "${IMAGE_NAMES}"
-          for image in "${IMAGES[@]}"; do
+          # Ta bort specifika Docker images som ska uppdateras
+          for image in $IMAGES; do
             echo "Removing image: $image"
             docker rmi $image 2>/dev/null || true
           done
@@ -286,19 +309,15 @@ jobs:
           cat .env 
           
           # Hämta senaste images för de tjänster som ska uppdateras
-          echo "Pulling latest images for services: ${SERVICES_TO_RESTART}"
-          # Split the space-separated service names into an array and process each one
-          IFS=' ' read -ra SERVICES <<< "${SERVICES_TO_RESTART}"
-          for service in "${SERVICES[@]}"; do
+          echo "Pulling latest images for services: $SERVICES"
+          for service in $SERVICES; do
             echo "Pulling latest image for $service..."
             docker-compose pull $service
           done
           
           # Starta om endast de tjänster som ska uppdateras
-          echo "Starting services: ${SERVICES_TO_RESTART}"
-          # Split the space-separated service names into an array and process each one
-          IFS=' ' read -ra SERVICES <<< "${SERVICES_TO_RESTART}"
-          for service in "${SERVICES[@]}"; do
+          echo "Starting services: $SERVICES"
+          for service in $SERVICES; do
             echo "Starting $service..."
             docker-compose up -d --no-deps $service
           done
