@@ -9,6 +9,7 @@ import com.advertisement.service.AdvertisementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class AdvertisementController {
     private final AdvertisementMapper advertisementMapper;
 
     @GetMapping("/test")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<Map<String, String>> testEndpoint() {
         log.info("Test endpoint hit");
         Map<String, String> response = new HashMap<>();
@@ -57,6 +59,7 @@ public class AdvertisementController {
      * @return A response entity containing a list of all advertisements.
      */
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<List<AdvertisementResponse>> getAllAdvertisements() {
         log.info("Fetching all advertisements");
         List<AdvertisementResponse> responses = advertisementService.getAllAdvertisements()
@@ -74,6 +77,7 @@ public class AdvertisementController {
      * @return A response entity containing the advertisement if found, otherwise 404 Not Found.
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<AdvertisementResponse> getAdvertisement(@PathVariable int id) {
         log.info("Fetching advertisement with id: {}", id);
 
@@ -91,6 +95,7 @@ public class AdvertisementController {
      * @return A response entity containing the created advertisement.
      */
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<AdvertisementResponse> createAdvertisement(@RequestBody AdvertisementRequest request) {
         log.info("Creating a new advertisement: {}", request);
         AdvertisementResponse response = advertisementMapper.toResponse(
@@ -110,6 +115,7 @@ public class AdvertisementController {
      * @return A response entity containing the updated advertisement if found, otherwise 404 Not Found.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<AdvertisementResponse> updateAdvertisement(
             @PathVariable int id,
             @RequestBody AdvertisementRequest request) {
@@ -133,6 +139,7 @@ public class AdvertisementController {
      * @return A response entity with HTTP status 200 if deleted, otherwise 404 Not Found.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<Void> deleteAdvertisement(@PathVariable int id) {
         log.info("Deleting advertisement with id: {}", id);
         boolean deleted = advertisementService.deleteAdvertisement(id);
@@ -153,6 +160,7 @@ public class AdvertisementController {
      * @return A response entity containing the updated advertisement if found, otherwise 404 Not Found.
      */
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<AdvertisementResponse> updateStatus(
             @PathVariable int id,
             @RequestBody StatusUpdateRequest statusRequest) {

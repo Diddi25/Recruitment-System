@@ -6,6 +6,6 @@ export default function authHeader() {
     // for Spring Boot back-end
     return { Authorization: 'Bearer ' + user.accessToken }; //Uses Bearer Token format
   } else {
-    return {"No user or token found"};
+    return "No user or token found";
   }
 }
