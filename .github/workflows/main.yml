@@ -235,7 +235,7 @@ jobs:
               ports:
                 - "80:80"
               environment:
-                - VITE_API_URL=http://localhost:8081
+                - VITE_API_URL=/api
               
             api-gateway:
               image: ${DOCKERHUB_USERNAME}/gateway:latest
@@ -250,12 +250,12 @@ jobs:
                 - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/api/advertisements/**
                 - SPRING_CLOUD_GATEWAY_ROUTES_1_URI=http://identification:8083
                 - SPRING_CLOUD_GATEWAY_ROUTES_1_ID=identification-service
-                - SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0=Path=/api/identity/**
+                - SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0=Path=/api/identification/**
                 - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://candidate:8084
                 - SPRING_CLOUD_GATEWAY_ROUTES_2_ID=candidate-service
-                - SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0=Path=/api/candidates/**
+                - SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0=Path=/api/applications/**
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_ADD-TO-SIMPLE-URL-HANDLER-MAPPING=true
-                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://localhost:5173
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDMETHODS=GET,POST,PUT,DELETE,OPTIONS
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDHEADERS=*
                 - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWCREDENTIALS=true

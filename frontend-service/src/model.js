@@ -142,9 +142,9 @@ export default {
     async submitApplication(formData) {
         try {
             const response = await candidateApplicationService.applyForPosition(formData);
-            return response;
-        } catch (err) {
-            throw new Error(`Error submitting application: ${err.message}`);
+        } catch (error) {
+            this.errorMessages.applicationSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
         }
     },
 
