@@ -3,34 +3,43 @@ package com.advertisement.dao;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import java.math.BigDecimal;
 
 /**
- * Entity class representing an advertisement.
+ * Entity class representing an advertisement (competence_profile).
  */
 @Entity
-@Table(name = "advertisements")
+@Table(name = "competence_profile")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AdvertisementDao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "competence_profile_id")
+    private Integer id;
 
-    private String advertisementText;
-    private String assigned;
+    @Column(name = "person_id")
+    private Integer personId;
+
+    @Column(name = "competence_id")
+    private Integer competenceId;
+
+    @Column(name = "years_of_experience")
+    private BigDecimal yearsOfExperience;
+
+    @Column(name = "status")
     private String status;
 
-    /**
-     * Constructs an AdvertisementDao with the specified details.
-     *
-     * @param advertisementText the text content of the advertisement
-     * @param assigned the user or entity assigned to the advertisement
-     * @param status the status of the advertisement
-     */
-    public AdvertisementDao(String advertisementText, String assigned, String status) {
-        this.advertisementText = advertisementText;
-        this.assigned = assigned;
-        this.status = status;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
+    private PersonDao person;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "competence_id", insertable = false, updatable = false)
+    private CompetenceDao competence;
 }

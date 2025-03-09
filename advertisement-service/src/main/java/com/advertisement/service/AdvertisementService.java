@@ -8,21 +8,16 @@ import com.advertisement.repository.AdvertisementRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Service class responsible for handling advertisement-related business logic.
- *
- * <p>
- * The class is annotated with {@link Service} to indicate that it is a service component
- * in the Spring framework. It uses {@link RequiredArgsConstructor} to automatically generate
- * a constructor for its dependencies and {@link Slf4j} for logging.
- * </p>
- */
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -31,119 +26,104 @@ public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
 
+
     /**
-     * Retrieves all advertisements from the database.
+     * Retrieves a paginated list of advertisements.
      *
-     * @return a list of all advertisements
+     * @param pageable the pagination information
+     * @return a page of advertisements
      */
-    public List<Advertisement> getAllAdvertisements() {
-        log.info("Fetching all advertisements from the database...");
-        List<Advertisement> advertisements = advertisementRepository.findAll()
-                .stream()
+    public Page<Advertisement> getAdvertisementsPage(Pageable pageable) {
+        log.info("Fetching advertisements page {} with size {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<AdvertisementDao> advertisementPage = advertisementRepository.findAllWithDetailsPaginated(pageable);
+
+        List<Advertisement> advertisementList = advertisementPage.getContent().stream()
                 .map(AdvertisementMapper::toDomain)
                 .collect(Collectors.toList());
-        log.info("Fetched {} advertisements.", advertisements.size());
-        return advertisements;
+
+        return new PageImpl<>(
+                advertisementList,
+                pageable,
+                advertisementPage.getTotalElements()
+        );
     }
 
     /**
      * Retrieves an advertisement by its ID.
      *
-     * @param id the ID of the advertisement
-     * @return an {@link Optional} containing the advertisement if found, otherwise empty
-     * @throws AdvertisementNotFoundException if no advertisement is found with the given ID
-     *
+     * @param id the ID of the advertisement to retrieve
+     * @return the advertisement with the given ID
+     * @throws AdvertisementNotFoundException if no advertisement with the given ID exists
      */
-    public Advertisement getAdvertisement(int id) {
+    public Advertisement getAdvertisementById(Integer id) {
         log.info("Fetching advertisement with id: {}", id);
-        return advertisementRepository.findById(id)
-                .map(ad -> {
-                    log.info("Advertisement found: {}", ad);
-                    return AdvertisementMapper.toDomain(ad);
-                })
-                .orElseThrow(() -> new AdvertisementNotFoundException("No advertisement found with id: " + id));
+        Optional<AdvertisementDao> advertisementDao = advertisementRepository.findById(id);
+        return advertisementDao
+                .map(AdvertisementMapper::toDomain)
+                .orElseThrow(() -> new AdvertisementNotFoundException("Advertisement not found with id: " + id));
     }
 
     /**
-     * Creates a new advertisement and saves it to the database.
+     * Retrieves advertisements by person ID.
+     *
+     * @param personId the ID of the person
+     * @return a list of advertisements for the given person
+     */
+    public List<Advertisement> getAdvertisementsByPersonId(Integer personId) {
+        log.info("Fetching advertisements for person with id: {}", personId);
+        List<AdvertisementDao> advertisements = advertisementRepository.findByPersonIdWithDetails(personId);
+        return advertisements.stream()
+                .map(AdvertisementMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Creates a new advertisement.
      *
      * @param advertisement the advertisement to create
      * @return the created advertisement
      */
     public Advertisement createAdvertisement(Advertisement advertisement) {
-        log.info("Creating a new advertisement: {}", advertisement);
-        AdvertisementDao savedDao = advertisementRepository.save(AdvertisementMapper.toDao(advertisement));
-        log.info("Advertisement created successfully with id: {}", savedDao.getId());
-        return AdvertisementMapper.toDomain(savedDao);
+        log.info("Creating new advertisement for person ID: {} and competence ID: {}",
+                advertisement.getPersonId(), advertisement.getCompetenceId());
+        AdvertisementDao advertisementDao = AdvertisementMapper.toDao(advertisement);
+        AdvertisementDao savedDao = advertisementRepository.save(advertisementDao);
+        return getAdvertisementById(savedDao.getId()); // Fetch with all details
     }
 
     /**
-     * Updates an existing advertisement by its ID.
+     * Updates an existing advertisement.
      *
      * @param id the ID of the advertisement to update
      * @param advertisement the updated advertisement data
-     * @return an {@link Optional} containing the updated advertisement if successful
-     * @throws AdvertisementNotFoundException if no advertisement is found with the given ID
+     * @return the updated advertisement
+     * @throws AdvertisementNotFoundException if no advertisement with the given ID exists
      */
-    public Optional<Advertisement> updateAdvertisement(int id, Advertisement advertisement) {
+    public Advertisement updateAdvertisement(Integer id, Advertisement advertisement) {
         log.info("Updating advertisement with id: {}", id);
-        Optional<Advertisement> existingAdOpt = advertisementRepository.findById(id)
-                .map(existingAd -> {
-                    log.debug("Existing advertisement: {}", existingAd);
-                    existingAd.setAdvertisementText(advertisement.getAdvertisementText());
-                    existingAd.setAssigned(advertisement.getAssigned());
-                    existingAd.setStatus(advertisement.getStatus());
-                    AdvertisementDao updatedAd = advertisementRepository.save(existingAd);
-                    log.info("Advertisement updated successfully: {}", updatedAd);
-                    return AdvertisementMapper.toDomain(updatedAd);
-                });
-        if (existingAdOpt.isEmpty()) {
-            log.warn("Advertisement with id {} not found", id);
-            throw new AdvertisementNotFoundException("No advertisement found with id: " + id);
+        if (!advertisementRepository.existsById(id)) {
+            throw new AdvertisementNotFoundException("Advertisement not found with id: " + id);
         }
-        return existingAdOpt;
+
+        advertisement.setId(id);
+        AdvertisementDao advertisementDao = AdvertisementMapper.toDao(advertisement);
+        advertisementRepository.save(advertisementDao);
+
+        return getAdvertisementById(id); // Fetch with all details
     }
 
     /**
      * Deletes an advertisement by its ID.
      *
      * @param id the ID of the advertisement to delete
-     * @return {@code true} if the advertisement was deleted, {@code false} if it was not found
-     * @throws AdvertisementNotFoundException if no advertisement is found with the given ID
+     * @throws AdvertisementNotFoundException if no advertisement with the given ID exists
      */
-    public boolean deleteAdvertisement(int id) {
+    public void deleteAdvertisement(Integer id) {
         log.info("Deleting advertisement with id: {}", id);
-        if (advertisementRepository.existsById(id)) {
-            advertisementRepository.deleteById(id);
-            log.info("Advertisement with id {} deleted successfully.", id);
-            return true;
+        if (!advertisementRepository.existsById(id)) {
+            throw new AdvertisementNotFoundException("Advertisement not found with id: " + id);
         }
-        log.warn("Advertisement with id {} not found. Deletion failed.", id);
-        throw new AdvertisementNotFoundException("No advertisement found with id: " + id);
+        advertisementRepository.deleteById(id);
     }
 
-    /**
-     * Updates the status of an advertisement by its ID.
-     *
-     * @param id the ID of the advertisement
-     * @param status the new status to set
-     * @return an {@link Optional} containing the updated advertisement if found, otherwise empty
-     * @throws AdvertisementNotFoundException if no advertisement is found with the given ID
-     */
-    public Optional<Advertisement> updateStatus(int id, String status) {
-        log.info("Updating status for advertisement with id: {} to {}", id, status);
-        Optional<Advertisement> existingAdOpt = advertisementRepository.findById(id)
-                .map(existingAd -> {
-                    log.debug("Current advertisement: {}", existingAd);
-                    existingAd.setStatus(status);
-                    AdvertisementDao updatedAd = advertisementRepository.save(existingAd);
-                    log.info("Advertisement status updated successfully: {}", updatedAd);
-                    return AdvertisementMapper.toDomain(updatedAd);
-                });
-        if (existingAdOpt.isEmpty()) {
-            log.warn("Advertisement with id {} not found", id);
-            throw new AdvertisementNotFoundException("No advertisement found with id: " + id);
-        }
-        return existingAdOpt;
-    }
 }

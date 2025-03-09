@@ -1,9 +1,16 @@
-import { advertisementService, candidateApplicationService} from "./services/resolvePromise.js";
+import { advertisementService, candidateApplicationService } from "./services/resolvePromise.js";
 import { ref, onMounted } from "vue";
 
 export default {
     //Advertisement
-    advertisement: [],
+    advertisementContent: [], // Actual list of advertisements (from content array)
+    advertisementPageInfo: {  // Pagination metadata
+        pageNumber: 0,
+        pageSize: 100,
+        totalElements: 0,
+        totalPages: 0,
+        last: true
+    },
     advertisementError: null,
     advertisementLoading: false,
     formData: {
@@ -13,22 +20,49 @@ export default {
     },
 
     //CandidateApplication
-    applications:[],
+    applications: [],
     applicationError: null,
     applicationLoading: false,
 
-    //Advertisement functions
+    //Advertisement functions with pagination
     async fetchAdvertisements() {
-      this.advertisementLoading = true;
-      try {
-        let result = await advertisementService.getAll();
-        this.advertisement = result.data;
-      } catch (err) {
-        this.advertisementError = `Error fetching advertisements: ${err.message}`;
-      } finally {
-        this.advertisementLoading = false;
-      }
+        this.advertisementLoading = true;
+        try {
+            // Use paged endpoint with current page number
+            let result = await advertisementService.getPaged(this.advertisementPageInfo.pageNumber);
+
+            // Update both content and pagination information
+            this.advertisementContent = result.data.content;
+            this.advertisementPageInfo = {
+                pageNumber: result.data.pageNumber,
+                pageSize: result.data.pageSize,
+                totalElements: result.data.totalElements,
+                totalPages: result.data.totalPages,
+                last: result.data.last
+            };
+        } catch (err) {
+            this.advertisementError = `Error fetching advertisements: ${err.message}`;
+        } finally {
+            this.advertisementLoading = false;
+        }
     },
+
+    // Go to next page
+    async goToNextPage() {
+        if (!this.advertisementPageInfo.last && !this.advertisementLoading) {
+            this.advertisementPageInfo.pageNumber += 1;
+            await this.fetchAdvertisements();
+        }
+    },
+
+    // Go to previous page
+    async goToPreviousPage() {
+        if (this.advertisementPageInfo.pageNumber > 0 && !this.advertisementLoading) {
+            this.advertisementPageInfo.pageNumber -= 1;
+            await this.fetchAdvertisements();
+        }
+    },
+
     /**
      * Creates a new advertisement containing the form data.
      */
@@ -44,6 +78,7 @@ export default {
             this.advertisementError = `Error creating advertisement: ${err.message}`;
         }
     },
+
     /**
      * Used to update the content of a specific advertisement.
      * @param {*} id
@@ -53,9 +88,10 @@ export default {
             await advertisementService.update(id, adToUpdate);
             this.fetchAdvertisements();
         } catch (error) {
-
+            this.advertisementError = `Error updating advertisement: ${error.message}`;
         }
     },
+
     /**
      * Used to delete a specific advertisement.
      * @param {*} id
@@ -70,6 +106,7 @@ export default {
             }
         }
     },
+
     /**
      * Used to update the status of an advertisement.
      * @param {*} id
@@ -86,26 +123,24 @@ export default {
 
     //CandidateApplication functions
     async fetchApplications() {
-      applicationLoading = true;
-      try {
-        const response = await candidateApplicationService.getAllApplications();
-        this.applications = response.data;
-      } catch (err) {
-        this.applicationError = `Error fetching applications: ${err.message}`;
-      } finally {
-        this.applicationLoading = false;
-      }
+        this.applicationLoading = true;
+        try {
+            const response = await candidateApplicationService.getAllApplications();
+            this.applications = response.data;
+        } catch (err) {
+            this.applicationError = `Error fetching applications: ${err.message}`;
+        } finally {
+            this.applicationLoading = false;
+        }
     },
 
     async submitApplication(formData) {
-      console.log("Sending application data to API:", formData); // Debugging log
-      try {
-        const response = await candidateApplicationService.applyForPosition(formData);
-        return response;
-      } catch (err) {
-        throw new Error(`Error submitting application: ${err.message}`);
-      }
+        console.log("Sending application data to API:", formData); // Debugging log
+        try {
+            const response = await candidateApplicationService.applyForPosition(formData);
+            return response;
+        } catch (err) {
+            throw new Error(`Error submitting application: ${err.message}`);
+        }
     },
-
 }
-

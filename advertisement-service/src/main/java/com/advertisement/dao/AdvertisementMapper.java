@@ -14,11 +14,13 @@ public class AdvertisementMapper {
      * @return an AdvertisementDao entity representing the given domain object
      */
     public static AdvertisementDao toDao(Advertisement advertisement) {
-        return new AdvertisementDao(
-                advertisement.getAdvertisementText(),
-                advertisement.getAssigned(),
-                advertisement.getStatus()
-        );
+        return AdvertisementDao.builder()
+                .id(advertisement.getId())
+                .personId(advertisement.getPersonId())
+                .competenceId(advertisement.getCompetenceId())
+                .yearsOfExperience(advertisement.getYearsOfExperience())
+                .status(advertisement.getStatus())
+                .build();
     }
 
     /**
@@ -28,12 +30,29 @@ public class AdvertisementMapper {
      * @return an Advertisement domain object representing the given entity
      */
     public static Advertisement toDomain(AdvertisementDao advertisementDao) {
-        return new Advertisement(
-                advertisementDao.getId(),
-                advertisementDao.getAdvertisementText(),
-                advertisementDao.getAssigned(),
-                advertisementDao.getStatus()
-        );
+        Advertisement advertisement = Advertisement.builder()
+                .id(advertisementDao.getId())
+                .personId(advertisementDao.getPersonId())
+                .competenceId(advertisementDao.getCompetenceId())
+                .yearsOfExperience(advertisementDao.getYearsOfExperience())
+                .status(advertisementDao.getStatus())
+                .build();
+
+        // Add person details if available
+        if (advertisementDao.getPerson() != null) {
+            PersonDao person = advertisementDao.getPerson();
+            advertisement.setPersonName(person.getName());
+            advertisement.setPersonSurname(person.getSurname());
+            advertisement.setPersonEmail(person.getEmail());
+            advertisement.setPersonNumber(person.getPersonNumber());
+        }
+
+        // Add competence details if available
+        if (advertisementDao.getCompetence() != null) {
+            CompetenceDao competence = advertisementDao.getCompetence();
+            advertisement.setCompetenceName(competence.getName());
+        }
+
+        return advertisement;
     }
 }
-
