@@ -6,7 +6,7 @@ import ApplicationPresenter from '@/presenters/ApplicationPresenter'
 import ApplicationListPresenter from '@/presenters/ApplicationListPresenter'
 import LoginSuccessPresenter from '@/presenters/LoginSuccessPresenter'
 import AdRecruiterPresenter from '@/presenters/AdRecruiterPresenter'
-import store from '@/store';
+import store from '../store/storeIndex.js';
 
 function createAppRouter(model) {
   const routerInstance = createRouter({
