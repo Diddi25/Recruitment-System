@@ -49,7 +49,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://advertisements:8082"))
+						.uri("http://advertisement:8082"))
 				.route("identification_service", r -> r
 						.path("/api/identification/**", "/api/identification")
 						.filters(f -> f
