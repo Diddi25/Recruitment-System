@@ -1,3 +1,7 @@
+/*
+* Is used to register a user.
+*/
+
 import RegisterView from "@/views/RegisterView";
 import { useStore } from "vuex";
 

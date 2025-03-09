@@ -1,4 +1,7 @@
-import { ref, onMounted } from "vue";
+/*
+* Is used to display a single application.
+*/
+
 import ApplicationView from "@/views/ApplicationView";
 
 export default function ApplicationPresenter(props) {
@@ -47,17 +50,25 @@ export default function ApplicationPresenter(props) {
 
   onMounted(props.model.fetchApplications); // Fetch applications on mount
 
-  return (
-    <div class="main">
-      <ApplicationView
-        showForm={showForm.value}
-        toggleForm={toggleForm}
-        formData={formData}
-        onSubmit={handleSubmit}
-        applications={props.model.applications}
-        error={error}
-        successMessage={successMessage}
-      />
-    </div>
-  );
+    if(props.model.user.role == "user") {
+        return (<div class="main">
+                     <ApplicationView
+                       showForm={showForm.value}
+                       toggleForm={toggleForm}
+                       formData={formData}
+                       onSubmit={handleSubmit}
+                       applications={props.model.applications}
+                       error={error}
+                       successMessage={successMessage}
+                     />
+                   </div>
+                 );
+    }
+    else if(props.model.user.role == "recruiter") {
+        return <h2>This page is not available for recruiters.</h2>;
+    }
+    else {
+        return <h2>Only authenticated users are able to apply.</h2>;
+    }
+
 }

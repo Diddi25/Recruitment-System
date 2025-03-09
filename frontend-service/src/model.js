@@ -1,7 +1,18 @@
+/*
+    The Model contains the current state of the app and is used to fetch and update
+    data using the gateway API.
+*/
+
 import { advertisementService, candidateApplicationService } from "./services/resolvePromise.js";
 import { ref, onMounted } from "vue";
 
 export default {
+    user: {username: null, password: null, isLoggedIn: null},
+    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
+    errorMessages: {registerSubmission: null, loginSubmission: null},
+    jwtToken: null,
+    advertisements: null,
+
     //Advertisement
     advertisementContent: [], // Actual list of advertisements (from content array)
     advertisementPageInfo: {  // Pagination metadata
@@ -24,6 +35,68 @@ export default {
     applicationError: null,
     applicationLoading: false,
 
+    getUserRole(roles){
+        if(roles[0] == "ROLE_RECRUITER") {
+            return "recruiter";
+        }
+        return "user";
+    },
+
+    /**
+     * Used to authenticate a user.
+     * Submits the user-provided login information to the identification service
+     * logging in the user, or displays an error message.
+     * @param {string} user Username
+     * @param {string} pass Password
+     */
+    async submitLoginCredentials(user, pass) {
+        this.flags.incorrectLoginCredentials = null;
+        const data = {username: user, password: pass}
+        let result = null;
+        try {
+            result = await identificationService.login(data);
+        }
+        catch (error) {
+            this.errorMessages.loginSubmission = error.response.data.message;
+            return;
+        }
+        this.jwtToken = result.data.accessToken;
+        this.user.role = this.getUserRole(result.data.roles);
+        this.user.isLoggedIn = true;
+    },
+
+    /**
+     * Used to register a user.
+     * Submits the user-provided registration information to the identification service 
+     * and fetches the result.
+     * @param {*} userInfo 
+     */
+    async submitRegistrationInfo(userInfo) {
+        const data = {username: userInfo.username, password: userInfo.password, email: userInfo.email, role: ["recruiter"],}
+        let result = "";
+        try {
+            result = await identificationService.register(data);
+        }
+        catch (error) {
+            this.errorMessages.registerSubmission = error.response.data.message;
+            return;
+        }
+        this.errorMessages.registerSubmission = result.data.message; 
+    },
+
+    /**
+     * Used to submit an application
+     * Submits the user-provided application info the the application service
+     * and fetches the result.
+     * @param {*} userInfo 
+     */
+    async submitApplication(userInfo) {
+        console.log("Not yet implemented");
+    },
+
+    /**
+     * Fetches all advertisements from the advertisement service.
+     */
     //Advertisement functions with pagination
     async fetchAdvertisements() {
         this.advertisementLoading = true;
@@ -121,6 +194,30 @@ export default {
         }
     },
 
+    /**
+     *
+     */
+    loginUsernameValidationError(val) {
+        if (val==true) {
+            this.errorMessages.loginSubmission = "Invalid username. The username must be between 3 and 20 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
+
+    /**
+     *
+     */
+    loginPasswordValidationError(val) {
+        if(val == true) {
+            this.errorMessages.loginSubmission = "Invalid password. The password must be between 6 and 256 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
+
     //CandidateApplication functions
     async fetchApplications() {
         this.applicationLoading = true;
@@ -143,4 +240,13 @@ export default {
             throw new Error(`Error submitting application: ${err.message}`);
         }
     },
+
+    fetchApplication() {
+
+    },
+
+    updateApplication() {
+
+    },
 }
+

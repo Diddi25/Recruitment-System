@@ -1,3 +1,7 @@
+/*
+Initializes the recruitment application (navigation bar and router).
+*/
+
 import { RouterView } from 'vue-router'
 import NavbarPresenter from './NavbarPresenter';
 

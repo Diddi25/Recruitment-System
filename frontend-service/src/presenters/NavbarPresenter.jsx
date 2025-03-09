@@ -1,3 +1,6 @@
+/*
+* The navigation bar is used to switch between different router pages.
+*/
 import NavbarView from "@/views/NavbarView";
 import { useStore } from "vuex";
 
