@@ -1,6 +1,11 @@
 import { ref } from 'vue';
 import ApplicationListView from "@/views/ApplicationListView";
 
+/**
+ * Lists all available applications.
+ * @param {*} props The reactive model.
+ * @returns 
+ */
 export default function ApplicationListPresenter(props) {
     const showApplications = ref(true);
 

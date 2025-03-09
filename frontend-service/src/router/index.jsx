@@ -7,6 +7,11 @@ import ApplicationListPresenter from '@/presenters/ApplicationListPresenter'
 import LoginSuccessPresenter from '@/presenters/LoginSuccessPresenter'
 import AdRecruiterPresenter from '@/presenters/AdRecruiterPresenter'
 
+/**
+ * Used to display different presenters.
+ * @param {*} model 
+ * @returns A vue router
+ */
 function router(model) {
   return createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),

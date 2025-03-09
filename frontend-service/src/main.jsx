@@ -6,6 +6,10 @@ import store from './store/storeIndex.js';
 import { reactive } from 'vue';
 import model from './model.js';
 
+
+/*
+Initializes the Vue app, store and model. 
+*/
 let rModel = reactive(model);
 const app = createApp(<App model={rModel}/>);
 app.use(router(rModel));
