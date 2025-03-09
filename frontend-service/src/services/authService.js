@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api'; // Relative URL
+const API_URL = 'http://localhost:8081/api'; 
 
+/*
+* Used to interact with the identifiactiono service.
+*/
 class AuthService {
   login(user) {
     return axios
@@ -17,10 +20,16 @@ class AuthService {
       });
   }
 
+/*
+* Logs out the current user.
+*/
   logout() {
     localStorage.removeItem('user');
   }
 
+/*
+* Registers an user.
+*/
   register(user) {
     console.log("Registration request:", user);
     return axios.post(API_URL + '/identification/register', {

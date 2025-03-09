@@ -1,5 +1,8 @@
 import AuthService from '../services/authService';
 
+/*
+* The authentication module is used to store the current user information/authentication state.
+*/
 const user = JSON.parse(localStorage.getItem('user'));
 const initialState = user
   ? { status: { loggedIn: true }, user }

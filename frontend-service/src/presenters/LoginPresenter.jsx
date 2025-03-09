@@ -4,6 +4,11 @@
 import LoginView from "@/views/LoginView";
 import LoginSuccessView from "@/views/LoginSuccessView";
 
+/**
+ * Used to log in a user.
+ * @param {*} props The reactive model.
+ * @returns 
+ */
 export default function LoginPresenter(props) {
     if(props.model.user.isLoggedIn != true) {
         return <div class="main"><LoginView model={props.model} submitLoginCredentials={onSubmitLoginCredentials} 
