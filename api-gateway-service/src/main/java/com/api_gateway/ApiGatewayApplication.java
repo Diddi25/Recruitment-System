@@ -24,19 +24,6 @@ public class ApiGatewayApplication {
 		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 
-	@Bean
-    	public CorsWebFilter corsFilter() {
-	        CorsConfiguration config = new CorsConfiguration();
-	        config.addAllowedOrigin("http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com");
-	        config.addAllowedMethod("*");
-	        config.addAllowedHeader("*");
-	        config.setAllowCredentials(true);
-	
-	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	        source.registerCorsConfiguration("/**", config);
-	        return new CorsWebFilter(source);
-    	}
-
 	/**
 	 * Configures route mappings for API requests to different microservices.
 	 *
