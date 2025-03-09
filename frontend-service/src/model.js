@@ -140,7 +140,6 @@ export default {
     },
 
     async submitApplication(formData) {
-        console.log("Sending application data to API:", formData); // Debugging log
         try {
             const response = await candidateApplicationService.applyForPosition(formData);
             return response;
@@ -157,10 +156,10 @@ export default {
      * @param {*} userInfo 
     */
     async submitRegistrationInfo(userInfo) {
-        const data = userInfo;
+        let data = userInfo;
         let result = "";
         try {
-            result = await store.dispatch("auth/register", data);
+            result = await store.dispatch("auth/register", userInfo);
         }
         catch (error) {
             this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
@@ -187,6 +186,7 @@ export default {
             this.errorMessages.loginSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
+        let usr = JSON.parse(localStorage.getItem('user'));
         this.user.isLoggedIn = true;
     },
 
@@ -194,7 +194,7 @@ export default {
      * 
      */
       loginUsernameValidationError(val) {
-        if (val==true) {
+        if (val == true) {
             this.errorMessages.loginSubmission = "Invalid username. The username must be between 3 and 20 characters long.";
         }
         else {
