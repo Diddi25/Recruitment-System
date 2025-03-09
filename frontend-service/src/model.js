@@ -1,7 +1,12 @@
 import { advertisementService, candidateApplicationService } from "./services/resolvePromise.js";
-import { ref, onMounted } from "vue";
+import store from './store/storeIndex.js';
 
 export default {
+    
+    user: {username: null, password: null, isLoggedIn: null, role: null},
+    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
+    errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null},
+
     //Advertisement
     advertisementContent: [], // Actual list of advertisements (from content array)
     advertisementPageInfo: {  // Pagination metadata
@@ -141,6 +146,71 @@ export default {
             return response;
         } catch (err) {
             throw new Error(`Error submitting application: ${err.message}`);
+        }
+    },
+
+        
+    /**
+     * Used to register a user.
+     * Submits the user-provided registration information to the identification service 
+     * and fetches the result.
+     * @param {*} userInfo 
+    */
+    async submitRegistrationInfo(userInfo) {
+        const data = userInfo;
+        let result = "";
+        try {
+            result = await store.dispatch("auth/register", data);
+        }
+        catch (error) {
+            this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
+        }
+    },
+    
+
+    /**
+     * Used to authenticate a user.
+     * Submits the user-provided login information to the identification service
+     * logging in the user, or displays an error message.
+     * @param {string} user Username
+     * @param {string} pass Password
+     */
+      async submitLoginCredentials(user, pass) {
+        this.flags.incorrectLoginCredentials = null;
+        const data = {username: user, password: pass}
+        let result = null;
+        try {
+            result = await store.dispatch("auth/login", data);
+        }
+        catch (error) {
+            this.errorMessages.loginSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
+        }
+        this.user.isLoggedIn = true;
+    },
+
+    /**
+     * 
+     */
+      loginUsernameValidationError(val) {
+        if (val==true) {
+            this.errorMessages.loginSubmission = "Invalid username. The username must be between 3 and 20 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
+
+    /**
+     * 
+     */
+    loginPasswordValidationError(val) {
+        if(val == true) {
+            this.errorMessages.loginSubmission = "Invalid password. The password must be between 6 and 256 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
         }
     },
 }

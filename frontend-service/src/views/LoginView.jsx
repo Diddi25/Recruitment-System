@@ -1,33 +1,19 @@
-import { ref, onMounted, computed } from 'vue'
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
-import { useRouter } from "vue-router";
 
-export default function LoginView({store}) {
+export default function LoginView(props) {
+
     let username = "";
     let password = "";
-    const loading = ref(false);
-    const message = ref("");
-    const router = useRouter();
 
-    const schema = yup.object().shape({
-        username: yup.string().required("Username is required!"),
-        password: yup.string().required("Password is required!"),
-    });
-
-    const loggedIn = computed(() => store.state.auth.status.loggedIn);
-
-    const handleLogin = async (event) => {
-        event.preventDefault();
-        loading.value = true;
-        try {
-            await store.dispatch("auth/login", { username: username, password: password });
-            router.push("/login-success")
-        } catch (error) {
-            loading.value = false;
-            message.value = error.response?.data?.message || error.message || error.toString();
-        }
-    };
+    return (<div class="login">
+        <h2>Log in</h2>
+        <h4>Username</h4>
+        <div class="text-input"><input type="text" onInput={onUsernameInput}>
+        </input></div>
+        <h4>Password</h4>
+        <div class="text-input"><input type="password" onInput={onPasswordInput}></input></div>
+        {getIncorrectCredentialsWarning()}
+        <button onClick={onSubmit}>Submit</button>
+    </div>);
 
     function onUsernameInput(input){
         username = input.target.value;
@@ -37,27 +23,36 @@ export default function LoginView({store}) {
         password = input.target.value;
     }
 
-    return (
-        <div class="login">
-            <h2>Log in</h2>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <br/>
-                    <input type="text"
-                           value={username}
-                           onInput={onUsernameInput} />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <br />
-                    <input type="password"
-                           value={password}
-                           onInput={onPasswordInput} />
-                </div>
-                <button type="submit" disabled={loading.value}>Login</button>
-            </form>
-            {message.value && <p>{message.value}</p>}
-        </div>
-    );
+    function getIncorrectCredentialsWarning(){
+        if(props.model.errorMessages.loginSubmission) {
+            return (<div class="submissionErrorMsg">{props.model.errorMessages.loginSubmission}</div>);
+        }
+    }
+
+    function isUsernameValid(username) {
+        if(username.length > 20 || username.length < 3) {
+            return false;
+        }
+        return true;
+    }
+
+    function isPasswordValid(password) {
+        if(password.length > 256 || password.length < 6) {
+            return false;
+        }
+        return true;
+    }
+
+    function onSubmit() {
+        if(!isUsernameValid(username)) {
+            props.setUsernameValidationError(true);
+            return;   
+        }
+
+        if(!isPasswordValid(password)) {
+            props.setPasswordValidationError(true);
+            return;
+        }
+        props.submitLoginCredentials(username, password);
+    }
 }
