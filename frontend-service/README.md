@@ -1,29 +1,18 @@
-# vue-project
+# Frontend service
 
-This template should help get you started developing with Vue 3 in Vite.
+The frontend microservice enables users to interact with the web application using Vite and Vue.js. The frontend application utilizes a model-view-presenter (MVP) architectural pattern. 
 
-## Recommended IDE Setup
+## Installing the project
+The project can be installed by running the command "npm install" in a terminal located in the project folder.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Starting the microservice
+The microservice can be started by running the command "npm run dev" in a terminal located in the project folder.
 
-## Customize configuration
+## Building the project for deployment
+The project can be built by running the command "npm run build" in a terminal located in the project folder.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+## Supported browsers
+Chrome, Version 133.0.6943.55
+Safari, Version 17.6 
+Edge, Version 133.0.3065.69
+Firefox, Version 129.0.1
