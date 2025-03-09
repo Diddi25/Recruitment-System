@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api'; // Relative URL
+const API_URL = 'http://localhost:8081/api'; // Relative URL
 
 class AuthService {
   login(user) {
