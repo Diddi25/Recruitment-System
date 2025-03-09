@@ -235,7 +235,7 @@ jobs:
               ports:
                 - "80:80"
               environment:
-                - VITE_API_URL=http://localhost:8081
+                - VITE_API_URL=http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com:8081
               
             api-gateway:
               image: ${DOCKERHUB_USERNAME}/gateway:latest
