@@ -24,7 +24,7 @@ class AuthService {
 
   register(user) {
     console.log("Registration request:", user);
-    return axios.post(API_URL + 'register', {
+    return axios.post(API_URL + '/identification/register', {
         name: user.name,
         surname: user.lastname,
         personNumber: user.personNumber,
