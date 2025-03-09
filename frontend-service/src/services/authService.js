@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com:8081/api/identification/';
+const API_URL = '/api'; // Relative URL
 
 class AuthService {
   login(user) {
     return axios
-      .post(API_URL + 'login', {
+      .post(API_URL + '/identification/login', {
         username: user.username,
         password: user.password
       })
