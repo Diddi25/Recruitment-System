@@ -146,6 +146,7 @@ export default {
             this.errorMessages.applicationSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
+        this.errorMessages.applicationSubmission = "Successfully submitted application";
     },
 
         
@@ -165,6 +166,7 @@ export default {
             this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
+        this.errorMessages.registerSubmission = "User registration was successfull";
     },
     
 

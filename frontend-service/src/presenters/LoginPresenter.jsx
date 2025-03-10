@@ -11,7 +11,7 @@ import LoginSuccessView from "@/views/LoginSuccessView";
  */
 export default function LoginPresenter(props) {
     if(props.model.user.isLoggedIn != true) {
-        return <div class="main"><LoginView model={props.model} submitLoginCredentials={onSubmitLoginCredentials} 
+        return <div class="main"><LoginView errorMsg={props.model.errorMessages.loginSubmission} submitLoginCredentials={onSubmitLoginCredentials} 
         setUsernameValidationError={onInvalidUsername} setPasswordValidationError={onInvalidPassword}/></div>;
     }
     else {
