@@ -7,7 +7,7 @@ import LoginSuccessView from "@/views/LoginSuccessView";
 /**
  * Used to log in a user.
  * @param {*} props The reactive model.
- * @returns 
+ * @returns A Presenter with a login button
  */
 export default function LoginPresenter(props) {
     if(props.model.user.isLoggedIn != true) {

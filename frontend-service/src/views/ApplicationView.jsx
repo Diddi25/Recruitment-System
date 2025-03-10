@@ -1,3 +1,8 @@
+/**
+ * Enables the user to submit an application
+ * @param {*} props 
+ * @returns 
+ */
 export default function ApplicationView(props) {
   
   let formData = {

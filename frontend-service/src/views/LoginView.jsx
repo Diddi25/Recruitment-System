@@ -1,4 +1,9 @@
 
+/**
+ * Enables the user to login using a submission form
+ * @param {*} props 
+ * @returns A login submission form.
+ */
 export default function LoginView(props) {
 
     let username = "";

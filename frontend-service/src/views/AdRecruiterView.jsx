@@ -1,3 +1,8 @@
+/**
+ * Enables a recruiter to view all applications.
+ * @param {*} props 
+ * @returns An interface showing all applications.
+ */
 export default function AdRecruiterView(props) {
     let ads = props.model.advertisements;
     let currentText = null;

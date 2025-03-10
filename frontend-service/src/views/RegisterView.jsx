@@ -1,3 +1,8 @@
+/**
+ * Enables the user to register an account.
+ * @param {*} props 
+ * @returns A registration form
+ */
 export default function RegisterView(props) {
 
   let userInfo = {name: null, lastname: null, personNumber: null, 

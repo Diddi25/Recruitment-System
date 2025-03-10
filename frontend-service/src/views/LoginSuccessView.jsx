@@ -1,13 +1,19 @@
-
+/**
+ * Displays a welcome page to the user
+ * @param {*} props 
+ * @returns 
+ */
 export default function LoginSuccessView(props) {
 
     const user = JSON.parse(localStorage.getItem('user'));
 
     function greetRoleACB() {
-        if(user.roles == "ROLE_USER") {
-            return "Hi Candidate!"
-        } else {
-            return "Hi Recruiter!"
+        if(user) {
+            if(user.roles == "ROLE_USER") {
+                return "Hi Candidate!"
+            } else {
+                return "Hi Recruiter!"
+            }    
         }
     }
 

@@ -3,7 +3,7 @@ import ApplicationView from "@/views/ApplicationView";
 /**
  * Used to submit a single application.
  * @param {*} props The reactive model.
- * @returns 
+ * @returns An Application Presenter.
  */
 export default function ApplicationPresenter(props) {
 
