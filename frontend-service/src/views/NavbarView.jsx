@@ -1,41 +1,21 @@
-import { ref, computed} from 'vue'
-import { useRouter } from "vue-router";
 
 /**
  * Displays a navigation bar
  * @param {*} param0 
  * @returns A navigation bar
  */
-export default function NavbarView({store}) {
-    const loading = ref(false);
-    const message = ref("");
-    const router = useRouter();
-    const loggedIn = computed(() => store.state.auth.status.loggedIn);
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    const logoutACB = async (event) => {
-        if(loggedIn.value) {
-            try {
-                await store.dispatch("auth/logout");
-                router.push("/login");
-            } catch (error) {
-                loading.value = false;
-                message.value = error.response?.data?.message || error.message || error.toString();
-            }
-        }
-    }
-
+export default function NavbarView(props) {
     function roleBasedAccess() {
-        if(user.roles == "ROLE_USER") {
+        if(props.role == "ROLE_USER") {
             return <RouterLink to="/apply">Apply</RouterLink>;
         } else {
             return <RouterLink to="/applications">View applications</RouterLink>;
         }
     }
 
-    if(loggedIn.value) {
+    if(props.isLoggedIn) {
         return (<div class="navbar">
-                    <button onClick={logoutACB}>Logout</button>
+                    <button onClick={props.logoutACB}>Logout</button>
                     <RouterLink to="/login-success">User</RouterLink>
                     {roleBasedAccess()}
                 </div>)

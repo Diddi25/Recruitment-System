@@ -203,6 +203,7 @@ export default {
             return;
         }
         let usr = JSON.parse(localStorage.getItem('user'));
+        this.user.role = usr.role;
         this.user.isLoggedIn = true;
     },
 
@@ -235,13 +236,13 @@ export default {
      * Logs out the user
      */
     async logoutUser() {
-        if(loggedIn.value) {
+        if(this.user.isLoggedIn) {
             try {
                 await store.dispatch("auth/logout");
             } catch (error) {
 
             }
-            store.state.auth.status.loggedIn = false;
         }
+        this.user.isLoggedIn = false;
     }
 }

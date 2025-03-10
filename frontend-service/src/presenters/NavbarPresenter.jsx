@@ -1,5 +1,4 @@
 import NavbarView from "@/views/NavbarView";
-import { useStore } from "vuex";
 
 /**
  * Used to navigate the website.
@@ -7,14 +6,12 @@ import { useStore } from "vuex";
  * @returns A navigation bar presenter.
  */
 export default function NavbarPresenter(props) {
-    const store = useStore();
     return (<div class="main">
-                <NavbarView model={props.model}
-                            store={store} onLogout={logout}
+                <NavbarView isLoggedIn = {props.model.user.isLoggedIn} role={props.model.user.role} logoutACB={logout}
                 />
            </div>);
 
     function logout() {
-        //console.log(props);
+        props.model.logoutUser();
     }
 }

@@ -6,10 +6,10 @@ import NavbarPresenter from './NavbarPresenter';
  * @param {*} props The reactive model.
  * @returns The web page content.
  */
-export default function App(model){
+export default function App(props){
     return (<div>
                 <h1>Recruitment Application</h1>
-                <NavbarPresenter model={model}/>
+                <NavbarPresenter model={props.model}/>
                 <RouterView />
            </div>
     );
