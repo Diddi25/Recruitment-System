@@ -61,7 +61,7 @@ public class ApiGatewayApplication {
 									}
 									return chain.filter(exchange);
 								})
-							 	.setResponseHeader("Access-Control-Allow-Origin", "http://ec2-51-20-56-156.eu-north-1.compute.amazonaws.com")
+							 	.setResponseHeader("Access-Control-Allow-Origin", "http://ec2-13-60-239-103.eu-north-1.compute.amazonaws.com")
 						)
 						.uri("http://identification:8083"))
 				.route("candidate_application_service", r -> r
