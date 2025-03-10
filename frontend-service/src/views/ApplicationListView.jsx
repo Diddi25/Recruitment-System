@@ -1,3 +1,9 @@
+/**
+ * Lists all applications
+ * @param {*} props 
+ * @returns An interface displaying all candidate applications
+ */
+
 export default function ApplicationListView(props) {
     const {
         listOfApplications,

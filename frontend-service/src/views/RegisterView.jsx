@@ -1,3 +1,8 @@
+/**
+ * Enables the user to register an account.
+ * @param {*} props 
+ * @returns A registration form
+ */
 export default function RegisterView(props) {
 
   let userInfo = {name: null, lastname: null, personNumber: null, 
@@ -6,26 +11,26 @@ export default function RegisterView(props) {
   return (<div class="register">
       <h2>Create an account</h2>        
       <h4>First name</h4>
-      <div class="text-input" onInput={onFNInput}><input type="text">
+      <div class="text-input" v-model = {userInfo.name} onInput={onFNInput}><input type="text">
       </input></div>
       <h4>Last Name</h4>
-      <div class="text-input" onInput={onLNInput}><input type="text"></input></div>
+      <div class="text-input"v-model = {userInfo.lastname} onInput={onLNInput}><input type="text"></input></div>
       <h4>Person number</h4>
-      <div class="text-input" onInput={onPNInput}><input type="text"></input></div>
+      <div class="text-input" v-model = {userInfo.personNumber} onInput={onPNInput}><input type="text"></input></div>
       <h4>Email address</h4>
-      <div class="text-input" onInput={onEmailInput}><input type="text">
+      <div class="text-input" v-model = {userInfo.email} onInput={onEmailInput}><input type="text">
       </input></div>
       <h4>Username</h4>
-      <div class="text-input" onInput={onUsernameInput}><input type="text">
+      <div class="text-input" v-model = {userInfo.username} onInput={onUsernameInput}><input type="text">
       </input></div>
       <h4>Password</h4>
-      <div class="text-input" onInput={onPasswordInput}><input type="text">
+      <div class="text-input" v-model = {userInfo.password}  onInput={onPasswordInput}><input type="text">
       </input></div>
       <button onClick={onSubmit}>Submit</button>
-      {getUsernameErrorMsg()}
+      {getErrorMsg()}
   </div>);
 
-  function getUsernameErrorMsg(){
+  function getErrorMsg(){
       if(props.model.errorMessages.registerSubmission != null) {
           return (<div class="submissionErrorMsg">{props.model.errorMessages.registerSubmission}</div>);
       }

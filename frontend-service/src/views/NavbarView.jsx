@@ -1,6 +1,11 @@
 import { ref, computed} from 'vue'
 import { useRouter } from "vue-router";
 
+/**
+ * Displays a navigation bar
+ * @param {*} param0 
+ * @returns A navigation bar
+ */
 export default function NavbarView({store}) {
     const loading = ref(false);
     const message = ref("");

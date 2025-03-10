@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8081/api'; 
 
 /*
-* Used to interact with the identifiactiono service.
+* Used to interact with the indentification service.
 */
 class AuthService {
   login(user) {

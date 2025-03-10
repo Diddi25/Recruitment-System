@@ -3,14 +3,14 @@ import AdRecruiterView from "@/views/AdRecruiterView";
 /**
  * Used by a recruiter to list all available applications.
  * @param {*} props The reactive model
- * @returns 
+ * @returns The recruiter presenter page.
  */
 export default function AdRecruiterPresenter(props) {
 
     return <div class="main"><AdRecruiterView model={props.model} createAd={onAdCreate}
         deleteAd={onAdDelete} updateAd={onAdUpdate} updateAdStatus={onAdStatusUpdate} getAllAds={onFetchAds}/></div>;
 
-    function onAdCreate(data){
+    function onAdCreate(data) {
         props.model.createAdvertisement(data)
     }
 
@@ -29,4 +29,5 @@ export default function AdRecruiterPresenter(props) {
     function onFetchAds() {
         props.model.fetchAdvertisements();
     }
+    
 }

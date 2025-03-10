@@ -1,13 +1,15 @@
 import { advertisementService, candidateApplicationService } from "./services/resolvePromise.js";
 import store from './store/storeIndex.js';
 
+/**
+ * The model represents the current state of the application.
+ */
 export default {
     
-    user: {username: null, password: null, isLoggedIn: null, role: null},
-    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
-    errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null},
+    user: {username: null, password: null, isLoggedIn: null, role: null}, //user information used to render Views
+    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input flags
+    errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null}, //contains all possible error messages
 
-    //Advertisement
     advertisementContent: [], // Actual list of advertisements (from content array)
     advertisementPageInfo: {  // Pagination metadata
         pageNumber: 0,
@@ -24,12 +26,13 @@ export default {
         status: 'unhandled'
     },
 
-    //CandidateApplication
-    applications: [],
-    applicationError: null,
-    applicationLoading: false,
 
-    //Advertisement functions with pagination
+    applications: [], //Actual list containing all applications
+    applicationError: null, //application error message
+
+    /**
+     * Fetches all advertisements
+     */
     async fetchAdvertisements() {
         this.advertisementLoading = true;
         try {
@@ -52,7 +55,9 @@ export default {
         }
     },
 
-    // Go to next page
+    /**
+     * Displays the next page of applications
+     */
     async goToNextPage() {
         if (!this.advertisementPageInfo.last && !this.advertisementLoading) {
             this.advertisementPageInfo.pageNumber += 1;
@@ -60,7 +65,9 @@ export default {
         }
     },
 
-    // Go to previous page
+    /**
+     * Displays the previous page of applications
+     */
     async goToPreviousPage() {
         if (this.advertisementPageInfo.pageNumber > 0 && !this.advertisementLoading) {
             this.advertisementPageInfo.pageNumber -= 1;
@@ -126,7 +133,9 @@ export default {
         }
     },
 
-    //CandidateApplication functions
+    /**
+     * Fetches all applications from the application service
+     */
     async fetchApplications() {
         this.applicationLoading = true;
         try {
@@ -139,6 +148,11 @@ export default {
         }
     },
 
+    /**
+     * Submits an application to the application service
+     * @param {*} formData 
+     * @returns 
+     */
     async submitApplication(formData) {
         try {
             const response = await candidateApplicationService.applyForPosition(formData);
@@ -146,6 +160,7 @@ export default {
             this.errorMessages.applicationSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
+        this.errorMessages.applicationSubmission = "Successfully submitted application";
     },
 
         
@@ -165,6 +180,7 @@ export default {
             this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
+        this.errorMessages.registerSubmission = "User registration was successfull";
     },
     
 
@@ -191,7 +207,7 @@ export default {
     },
 
     /**
-     * 
+     * Sets the error message for the username input validation.
      */
       loginUsernameValidationError(val) {
         if (val == true) {
@@ -203,7 +219,7 @@ export default {
     },
 
     /**
-     * 
+     * Sets the error message for the password input validation.
      */
     loginPasswordValidationError(val) {
         if(val == true) {
@@ -213,4 +229,19 @@ export default {
             this.errorMessages.loginSubmission = null;
         }
     },
+
+
+    /**
+     * Logs out the user
+     */
+    async logoutUser() {
+        if(loggedIn.value) {
+            try {
+                await store.dispatch("auth/logout");
+            } catch (error) {
+
+            }
+            store.state.auth.status.loggedIn = false;
+        }
+    }
 }

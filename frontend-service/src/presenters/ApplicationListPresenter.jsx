@@ -4,7 +4,7 @@ import ApplicationListView from "@/views/ApplicationListView";
 /**
  * Lists all available applications.
  * @param {*} props The reactive model.
- * @returns 
+ * @returns an Application List Presenter.
  */
 export default function ApplicationListPresenter(props) {
     const showApplications = ref(true);

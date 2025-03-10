@@ -1,4 +1,9 @@
 
+/**
+ * Enables the user to login using a submission form
+ * @param {*} props 
+ * @returns A login submission form.
+ */
 export default function LoginView(props) {
 
     let username = "";
@@ -7,10 +12,10 @@ export default function LoginView(props) {
     return (<div class="login">
         <h2>Log in</h2>
         <h4>Username</h4>
-        <div class="text-input"><input type="text" onInput={onUsernameInput}>
+        <div class="text-input"><input v-model={username} type="text" onInput={onUsernameInput}>
         </input></div>
         <h4>Password</h4>
-        <div class="text-input"><input type="password" onInput={onPasswordInput}></input></div>
+        <div class="text-input"><input v-model={password} type="password" onInput={onPasswordInput}></input></div>
         {getIncorrectCredentialsWarning()}
         <button onClick={onSubmit}>Submit</button>
     </div>);
@@ -24,8 +29,8 @@ export default function LoginView(props) {
     }
 
     function getIncorrectCredentialsWarning(){
-        if(props.model.errorMessages.loginSubmission) {
-            return (<div class="submissionErrorMsg">{props.model.errorMessages.loginSubmission}</div>);
+        if(props.errorMsg) {
+            return (<div class="submissionErrorMsg">{props.errorMsg}</div>);
         }
     }
 
