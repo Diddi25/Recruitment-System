@@ -63,7 +63,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://localost:8083"))
+						.uri("http://localhost:8083"))
 				.route("candidate_application_service", r -> r
 						.path("/api/applications/**", "/api/applications") // Matches all requests to CandidateApplicationController
 						.filters(f -> f
