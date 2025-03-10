@@ -20,7 +20,7 @@ export default function ApplicationListView(props) {
                     <ul>
                         {props.applications.map((app) => (
                             <li key={app.id}>
-                                {app.candidateName} - {app.status || "No status available"}
+                                {app.candidateName} - {app.status || "unhandled"}
                             </li>
                         ))}
                     </ul>

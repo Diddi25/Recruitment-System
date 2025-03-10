@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * This class is mapped to the `candidate_applications` table.
  */
 @Entity
-@Table(name = "candidate_applications")
+@Table(name = "candidate_applications3")
 @Data
 @NoArgsConstructor
 public class CandidateApplicationDAO {
