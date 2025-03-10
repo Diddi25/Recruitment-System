@@ -4,12 +4,13 @@
 */
 
 import { advertisementService, candidateApplicationService } from "./services/resolvePromise.js";
-import { ref, onMounted } from "vue";
+import store from './store/storeIndex.js';
 
 export default {
-    user: {username: null, password: null, isLoggedIn: null},
+
+    user: {username: null, password: null, isLoggedIn: null, role: null},
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null},
-    errorMessages: {registerSubmission: null, loginSubmission: null},
+    errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null},
     jwtToken: null,
     advertisements: null,
 
@@ -62,14 +63,15 @@ export default {
         }
         this.jwtToken = result.data.accessToken;
         this.user.role = this.getUserRole(result.data.roles);
+        console.log(result.data)
         this.user.isLoggedIn = true;
     },
 
     /**
      * Used to register a user.
-     * Submits the user-provided registration information to the identification service 
+     * Submits the user-provided registration information to the identification service
      * and fetches the result.
-     * @param {*} userInfo 
+     * @param {*} userInfo
      */
     async submitRegistrationInfo(userInfo) {
         const data = {username: userInfo.username, password: userInfo.password, email: userInfo.email, role: ["recruiter"],}
@@ -81,17 +83,24 @@ export default {
             this.errorMessages.registerSubmission = error.response.data.message;
             return;
         }
-        this.errorMessages.registerSubmission = result.data.message; 
+        this.errorMessages.registerSubmission = result.data.message;
     },
 
     /**
      * Used to submit an application
      * Submits the user-provided application info the the application service
      * and fetches the result.
-     * @param {*} userInfo 
+     * @param {*} userInfo
      */
-    async submitApplication(userInfo) {
-        console.log("Not yet implemented");
+    async submitApplication(formData) {
+        console.log("Sending application data to API:", formData); // Debugging log
+        try {
+            //const response = await candidateApplicationService.applyForPosition(formData);
+        } catch (error) {
+            //this.errorMessages.applicationSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
+        }
+        return;
     },
 
     /**
@@ -231,22 +240,68 @@ export default {
         }
     },
 
-    async submitApplication(formData) {
-        console.log("Sending application data to API:", formData); // Debugging log
+    /**
+     * Used to register a user.
+     * Submits the user-provided registration information to the identification service
+     * and fetches the result.
+     * @param {*} userInfo
+    */
+    async submitRegistrationInfo(userInfo) {
+        let data = userInfo;
+        let result = "";
         try {
-            const response = await candidateApplicationService.applyForPosition(formData);
-            return response;
-        } catch (err) {
-            throw new Error(`Error submitting application: ${err.message}`);
+            result = await store.dispatch("auth/register", userInfo);
+        }
+        catch (error) {
+            this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
         }
     },
 
-    fetchApplication() {
 
+    /**
+     * Used to authenticate a user.
+     * Submits the user-provided login information to the identification service
+     * logging in the user, or displays an error message.
+     * @param {string} user Username
+     * @param {string} pass Password
+     */
+      async submitLoginCredentials(user, pass) {
+        this.flags.incorrectLoginCredentials = null;
+        const data = {username: user, password: pass}
+        let result = null;
+        try {
+            result = await store.dispatch("auth/login", data);
+        }
+        catch (error) {
+            this.errorMessages.loginSubmission = error.response?.data?.message || error.message || error.toString();
+            return;
+        }
+        let usr = JSON.parse(localStorage.getItem('user'));
+        this.user.isLoggedIn = true;
     },
 
-    updateApplication() {
+    /**
+     *
+     */
+      loginUsernameValidationError(val) {
+        if (val == true) {
+            this.errorMessages.loginSubmission = "Invalid username. The username must be between 3 and 20 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
+    },
 
+    /**
+     *
+     */
+    loginPasswordValidationError(val) {
+        if(val == true) {
+            this.errorMessages.loginSubmission = "Invalid password. The password must be between 6 and 256 characters long.";
+        }
+        else {
+            this.errorMessages.loginSubmission = null;
+        }
     },
 }
-

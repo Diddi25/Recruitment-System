@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/api/identification/';
+const API_URL = 'http://localhost:8081/api'; // Relative URL
 
 class AuthService {
   login(user) {
     return axios
-      .post(API_URL + 'login', {
+      .post(API_URL + '/identification/login', {
         username: user.username,
         password: user.password
       })
@@ -13,7 +13,6 @@ class AuthService {
         if (response.data.accessToken) {
           localStorage.setItem('user', JSON.stringify(response.data));
         }
-        console.log(user, response.data)
         return response.data;
       });
   }
@@ -24,7 +23,7 @@ class AuthService {
 
   register(user) {
     console.log("Registration request:", user);
-    return axios.post(API_URL + 'register', {
+    return axios.post(API_URL + '/identification/register', {
         name: user.name,
         surname: user.lastname,
         personNumber: user.personNumber,

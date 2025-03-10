@@ -52,9 +52,17 @@ function createAppRouter(model) {
 
   routerInstance.beforeEach((to, from, next) => {
     const protectedRoutes = ['/apply', '/applications', '/manage-ads'];
+    let user = JSON.parse(localStorage.getItem('user'));
 
     if (protectedRoutes.includes(to.path) && !store.state.auth.status.loggedIn) {
       return next('/login');
+    }
+
+    if(protectedRoutes.includes(to.path) && user.roles == "ROLE_USER") {
+        return next('/login-success');
+    }
+    if(protectedRoutes.includes(to.path) && user.roles == "ROLE_RECRUITER") {
+        return next('/login-success');
     }
 
     next();

@@ -1,7 +1,6 @@
 /*
 * Is used to enable the user to login to the app.
 */
-
 import LoginView from "@/views/LoginView";
 import LoginSuccessView from "@/views/LoginSuccessView";
 
@@ -11,7 +10,7 @@ export default function LoginPresenter(props) {
                                             submitLoginCredentials={onSubmitLoginCredentials}
                                             setUsernameValidationError={onInvalidUsername}
                                             setPasswordValidationError={onInvalidPassword}/>
-                </div>;
+               </div>;
     }
     else {
         return <div class="main"><LoginSuccessView/></div>
