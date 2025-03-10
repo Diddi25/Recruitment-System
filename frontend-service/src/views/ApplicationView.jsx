@@ -5,6 +5,13 @@
  */
 export default function ApplicationView(props) {
   
+  const competenceOptions = [
+    { id: 1, name: "Ticket Sales" },
+    { id: 2, name: "Lotteries" },
+    { id: 3, name: "Roller Coaster Operation" },
+  ];
+
+
   let formData = {
     candidateName: "",
     skills: "",
@@ -29,12 +36,16 @@ export default function ApplicationView(props) {
                   <label>Full Name:</label><br />
                   <input type="text" v-model={formData.candidateName} required />
                 </div>
-    
+                
                 <div>
-                  <label>Competence Profile:</label><br />
-                  <input type="text" v-model={formData.skills} required />
+                <label>Competence Profile:</label><br />
+                <select v-model={formData.skills} required>
+                <option value="">Select a position</option>
+                {competenceOptions.map((comp) => (
+                  <option key={comp.id} value={comp.name}>{comp.name}</option>
+                ))}
+                </select>
                 </div>
-    
                 <div>
                   <label>Experience Years:</label><br />
                   <input type="number" v-model={formData.experienceYears} min="0" required />

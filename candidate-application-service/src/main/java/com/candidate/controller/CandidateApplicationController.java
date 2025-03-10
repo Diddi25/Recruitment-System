@@ -5,16 +5,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+/**
+ * Controller for managing candidate applications.
+ * Provides endpoints for retrieving applications and applying for positions.
+ */
 @RestController
 @RequestMapping("/api/applications")
 @RequiredArgsConstructor
 public class CandidateApplicationController {
 
     private final CandidateApplicationService candidateapplicationservice;
-
+    /**
+     * Retrieves all candidate applications.
+     *
+     * @return A {@link ResponseEntity} containing a list of all candidate applications.
+     */
     // Get all applications
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -31,9 +38,12 @@ public class CandidateApplicationController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-
-    // Apply for a position
+    /**
+     * Submits an application for a position.
+     *
+     * @param request The application request details.
+     * @return A {@link ResponseEntity} containing the response after applying.
+     */
     @PostMapping("/apply")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> applyForPosition(
