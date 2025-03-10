@@ -11,30 +11,22 @@
     function onClickApplicant(applicationId) {
         props.viewApplicant(applicationId);
     }
-} */
-
-    export default function ApplicationListView(props) {
+}  */
+export default function ApplicationListView(props) {
         return (
             <div>
-                <h2>Lista över ansökningar</h2>
-                {props.model.applications.length > 0 ? (
-                    props.model.applications.map(listApplications)
+                <h3>All Applications</h3>
+                {props.applications && props.applications.length > 0 ? (
+                    <ul>
+                        {props.applications.map((app) => (
+                            <li key={app.id}>
+                                {app.candidateName} - {app.status || "No status available"}
+                            </li>
+                        ))}
+                    </ul>
                 ) : (
-                    <p>Inga ansökningar att visa.</p>
+                    <p>No applications found.</p>
                 )}
             </div>
         );
-    
-        function listApplications(application) {
-            return (
-                <div className="applicationListElement" key={application.applicationId} onClick={() => onClickApplicant(application.applicationId)}>
-                    {application.name + " " + application.lastName + ", status: " + application.status}
-                </div>
-            );
-        }
-    
-        function onClickApplicant(applicationId) {
-            props.viewApplicant(applicationId);
-        }
-    }
-    
+      } 

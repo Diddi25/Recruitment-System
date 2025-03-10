@@ -1,4 +1,4 @@
-import ApplicationListView from "@/views/ApplicationListView";
+//import ApplicationListView from "@/views/ApplicationListView";
 
 /*export default function ApplicationListPresenter(props) {
     return <div className="main"><ApplicationListView model={props.model} viewApplicant={onViewApplicant}/></div>;
@@ -8,7 +8,7 @@ import ApplicationListView from "@/views/ApplicationListView";
     }
 }*/
 
-import { ref, onMounted, defineComponent } from "vue";
+/*import { ref, onMounted, defineComponent } from "vue";
 import { candidateApplicationService } from "../services/api.js";
 
 export default defineComponent({
@@ -47,4 +47,25 @@ export default defineComponent({
       </div>
     );
   },
-});
+}); */
+
+
+import ApplicationListView from "@/views/ApplicationListView"; // Keep this one
+import candidateApplicationModel from "@/candidateApplicationModel";
+
+export default function ApplicationListPresenter() {
+  
+  function fetchApplicationsACB() {
+    candidateApplicationModel.fetchApplications();  
+  }
+  function closeApplications() {
+    //showApplications.value = false;  // Hide applications when closing, but its currently not used.
+  }
+
+return (
+    <div className="main">
+      <button onClick={fetchApplicationsACB}>Fetch Applications</button> 
+      <ApplicationListView applications={candidateApplicationModel.applications.value || []} />
+    </div>
+  );
+}
