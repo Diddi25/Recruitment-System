@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.identification_service.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpServletResponse;
 import com.identification_service.model.EnumRoles;
 import com.identification_service.security.services.UserDetailsImpl;
 import com.identification_service.model.Role;
@@ -32,9 +33,15 @@ import com.identification_service.repository.RoleRepository;
 import com.identification_service.repository.UserRepository;
 import com.identification_service.security.jwt.JwtUtils;
 
+/**
+ * Controller for handling authentication-related requests, such as user sign-in and sign-up.
+ */
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/identification/")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -51,8 +58,14 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    /**
+     * Authenticates the user based on the provided credentials (username and password).
+     *
+     * @param loginRequest The login request containing the username and password.
+     * @return A response containing the generated JWT token, user details, and roles.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -63,43 +76,54 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity
-                .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+        JwtResponse body = new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
+                userDetails.getEmail(), roles, userDetails.getName(),
+                userDetails.getSurname(), userDetails.getPersonNumber());
+
+        return ResponseEntity.ok(body);
     }
 
-    @PostMapping("/signup")
+    /**
+     * Registers a new user in the system.
+     *
+     * @param signUpRequest The sign-up request containing the user's details.
+     * @return A response indicating whether the registration was successful or not.
+     */
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        log.info("start register user");
+        log.info(signUpRequest.toString());
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            throw new ValidationFailedException("Error: Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            throw new ValidationFailedException("Error: Email is already in use!");
         }
 
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+        User user = new User(signUpRequest.getName(), signUpRequest.getSurname(),
+                signUpRequest.getPersonNumber(), signUpRequest.getEmail(),
+                signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(EnumRoles.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new ValidationFailedException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "recruiter":
                         Role recruiterRole = roleRepository.findByName(EnumRoles.ROLE_RECRUITER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new ValidationFailedException("Error: Role is not found."));
                         roles.add(recruiterRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByName(EnumRoles.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new ValidationFailedException("Error: Role is not found."));
                         roles.add(userRole);
                 }
             });
@@ -107,7 +131,7 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-
+        log.info("registered successfully");
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

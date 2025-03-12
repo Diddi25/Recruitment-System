@@ -1,7 +1,7 @@
 //import ApplicationListView from "@/views/ApplicationListView";
 
-/*export default function ApplicationListPresenter(props) {
-    return <div className="main"><ApplicationListView model={props.model} viewApplicant={onViewApplicant}/></div>;
+export default function ApplicationListPresenter(props) {
+    const showApplications = ref(true);
 
     function onViewApplicant(){
 
@@ -42,9 +42,17 @@ export default defineComponent({
   },
   render() {
     return (
-      <div className="main">
-        <ApplicationListView model={{ applications: this.applications }} viewApplicant={this.onViewApplicant} />
-      </div>
+        <div class="main">
+            <ApplicationListView
+                model={props.model}
+                listOfApplications={props.model.advertisementContent}
+                pageInfo={props.model.advertisementPageInfo}
+                fetchApplications={fetchApplicationsACB}
+                goToNextPage={goToNextPageACB}
+                goToPreviousPage={goToPreviousPageACB}
+                isLoading={props.model.advertisementLoading}
+            />
+        </div>
     );
   },
 }); */

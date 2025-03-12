@@ -1,0 +1,329 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_message:
+        description: 'Anledning till denna deployment'
+        required: true
+        default: 'Manuell deployment'
+      deploy_frontend:
+        description: 'Deploya frontend'
+        type: boolean
+        default: false
+      deploy_gateway:
+        description: 'Deploya API Gateway'
+        type: boolean
+        default: false
+      deploy_advertisement:
+        description: 'Deploya Advertisement service'
+        type: boolean
+        default: false
+      deploy_identification:
+        description: 'Deploya Identification service'
+        type: boolean
+        default: false
+      deploy_candidate:
+        description: 'Deploya Candidate service'
+        type: boolean
+        default: false
+      deploy_all:
+        description: 'Deploya alla tjänster'
+        type: boolean
+        default: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set environment variables for services
+      run: |
+        echo "DEPLOY_FRONTEND=${{ github.event.inputs.deploy_frontend == 'true' || github.event.inputs.deploy_all == 'true' }}" >> $GITHUB_ENV
+        echo "DEPLOY_GATEWAY=${{ github.event.inputs.deploy_gateway == 'true' || github.event.inputs.deploy_all == 'true' }}" >> $GITHUB_ENV
+        echo "DEPLOY_ADVERTISEMENT=${{ github.event.inputs.deploy_advertisement == 'true' || github.event.inputs.deploy_all == 'true' }}" >> $GITHUB_ENV
+        echo "DEPLOY_IDENTIFICATION=${{ github.event.inputs.deploy_identification == 'true' || github.event.inputs.deploy_all == 'true' }}" >> $GITHUB_ENV
+        echo "DEPLOY_CANDIDATE=${{ github.event.inputs.deploy_candidate == 'true' || github.event.inputs.deploy_all == 'true' }}" >> $GITHUB_ENV
+
+    - name: Set up JDK 17
+      if: env.DEPLOY_GATEWAY == 'true' || env.DEPLOY_ADVERTISEMENT == 'true' || env.DEPLOY_IDENTIFICATION == 'true' || env.DEPLOY_CANDIDATE == 'true'
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Fix permissions for Maven wrapper
+      if: env.DEPLOY_GATEWAY == 'true' || env.DEPLOY_ADVERTISEMENT == 'true' || env.DEPLOY_IDENTIFICATION == 'true' || env.DEPLOY_CANDIDATE == 'true'
+      run: |
+        if [ "$DEPLOY_GATEWAY" = "true" ]; then
+          chmod +x api-gateway-service/mvnw
+        fi
+        if [ "$DEPLOY_ADVERTISEMENT" = "true" ]; then
+          chmod +x advertisement-service/mvnw
+        fi
+        if [ "$DEPLOY_IDENTIFICATION" = "true" ]; then
+          chmod +x identification-service/mvnw
+        fi
+        if [ "$DEPLOY_CANDIDATE" = "true" ]; then
+          chmod +x candidate-application-service/mvnw
+        fi
+        
+    - name: Build Spring Boot apps
+      run: |
+        if [ "$DEPLOY_GATEWAY" = "true" ]; then
+          cd api-gateway-service && ./mvnw package -DskipTests && cd ..
+        fi
+        if [ "$DEPLOY_ADVERTISEMENT" = "true" ]; then
+          cd advertisement-service && ./mvnw package -DskipTests && cd ..
+        fi
+        if [ "$DEPLOY_IDENTIFICATION" = "true" ]; then
+          cd identification-service && ./mvnw package -DskipTests && cd ..
+        fi
+        if [ "$DEPLOY_CANDIDATE" = "true" ]; then
+          cd candidate-application-service && ./mvnw package -DskipTests && cd ..
+        fi
+    
+    - name: Set up Node.js
+      if: env.DEPLOY_FRONTEND == 'true'
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+        
+    - name: Build Frontend
+      if: env.DEPLOY_FRONTEND == 'true'
+      run: |
+        cd frontend-service
+        echo "Frontend kommer att byggas i Docker build-steget"
+        
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Build and push Docker images
+      run: |
+        # Bygg och tagga images
+        if [ "$DEPLOY_FRONTEND" = "true" ]; then
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest ./frontend-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+        fi
+        
+        if [ "$DEPLOY_GATEWAY" = "true" ]; then
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest ./api-gateway-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
+        fi
+        
+        if [ "$DEPLOY_ADVERTISEMENT" = "true" ]; then
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest ./advertisement-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest
+        fi
+        
+        if [ "$DEPLOY_IDENTIFICATION" = "true" ]; then
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/identification:latest ./identification-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/identification:latest
+        fi
+        
+        if [ "$DEPLOY_CANDIDATE" = "true" ]; then
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest ./candidate-application-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest
+        fi
+
+    - name: Prepare services list for EC2
+      run: |
+        SERVICES=""
+        CONTAINERS=""
+        IMAGES=""
+        
+        if [ "$DEPLOY_FRONTEND" = "true" ]; then 
+          SERVICES="$SERVICES frontend"
+          CONTAINERS="$CONTAINERS frontend"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest"
+        fi
+        
+        if [ "$DEPLOY_GATEWAY" = "true" ]; then 
+          SERVICES="$SERVICES api-gateway"
+          CONTAINERS="$CONTAINERS gateway"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest"
+        fi
+        
+        if [ "$DEPLOY_ADVERTISEMENT" = "true" ]; then 
+          SERVICES="$SERVICES advertisement"
+          CONTAINERS="$CONTAINERS advertisement"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/advertisement:latest"
+        fi
+        
+        if [ "$DEPLOY_IDENTIFICATION" = "true" ]; then 
+          SERVICES="$SERVICES identification"
+          CONTAINERS="$CONTAINERS identification"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/identification:latest"
+        fi
+        
+        if [ "$DEPLOY_CANDIDATE" = "true" ]; then 
+          SERVICES="$SERVICES candidate"
+          CONTAINERS="$CONTAINERS candidate"
+          IMAGES="$IMAGES ${{ secrets.DOCKERHUB_USERNAME }}/candidate:latest"
+        fi
+        
+        # Trim leading spaces
+        SERVICES=$(echo $SERVICES | xargs)
+        CONTAINERS=$(echo $CONTAINERS | xargs)
+        IMAGES=$(echo $IMAGES | xargs)
+        
+        echo "SERVICES=$SERVICES" >> $GITHUB_ENV
+        echo "CONTAINERS=$CONTAINERS" >> $GITHUB_ENV
+        echo "IMAGES=$IMAGES" >> $GITHUB_ENV
+        
+        echo "Services to deploy: $SERVICES"
+        echo "Containers to remove: $CONTAINERS"
+        echo "Images to update: $IMAGES"
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        envs: SERVICES,CONTAINERS,IMAGES
+        script: |
+          # Skapa backup-mapp för säkerhetskopior
+          mkdir -p ~/app/backups
+          timestamp=$(date +%Y%m%d_%H%M%S)
+          
+          # Skapa backup av befintliga filer om de finns
+          if [ -f ~/app/docker-compose.yml ]; then
+            cp ~/app/docker-compose.yml ~/app/backups/docker-compose.yml.$timestamp
+          fi
+          
+          if [ -f ~/app/.env ]; then
+            cp ~/app/.env ~/app/backups/.env.$timestamp
+          fi
+          
+          # Gå till app-mappen
+          mkdir -p ~/app
+          cd ~/app
+          
+          # Stoppa och ta bort specifika containers som ska uppdateras
+          for container in $CONTAINERS; do
+            echo "Stopping and removing container: $container"
+            docker stop $container 2>/dev/null || true
+            docker rm $container 2>/dev/null || true
+          done
+          
+          # Ta bort specifika Docker images som ska uppdateras
+          for image in $IMAGES; do
+            echo "Removing image: $image"
+            docker rmi $image 2>/dev/null || true
+          done
+          
+          if [ ! -f ~/app/.env ]; then
+            mkdir -p ~/app
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > ~/app/.env
+          fi
+          
+          # Skapa ny docker-compose.yml fil
+          cat > ~/app/docker-compose.yml << 'EOL'
+          version: '3.8'
+          services:
+            frontend:
+              image: ${DOCKERHUB_USERNAME}/frontend:latest
+              container_name: frontend
+              restart: always
+              ports:
+                - "80:80"
+              environment:
+                - VITE_API_URL=/api
+              
+            api-gateway:
+              image: ${DOCKERHUB_USERNAME}/gateway:latest
+              container_name: gateway
+              restart: always
+              ports:
+                - "8081:8081"
+              environment:
+                - SERVER_PORT=8081
+                - SPRING_CLOUD_GATEWAY_ROUTES_0_URI=http://advertisement:8082
+                - SPRING_CLOUD_GATEWAY_ROUTES_0_ID=advertisement-service
+                - SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0=Path=/api/advertisements/**
+                - SPRING_CLOUD_GATEWAY_ROUTES_1_URI=http://identification:8083
+                - SPRING_CLOUD_GATEWAY_ROUTES_1_ID=identification-service
+                - SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0=Path=/api/identification/**
+                - SPRING_CLOUD_GATEWAY_ROUTES_2_URI=http://candidate:8084
+                - SPRING_CLOUD_GATEWAY_ROUTES_2_ID=candidate-service
+                - SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0=Path=/api/applications/**
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_ADD-TO-SIMPLE-URL-HANDLER-MAPPING=true
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS=http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDMETHODS=GET,POST,PUT,DELETE,OPTIONS
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDHEADERS=*
+                - SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWCREDENTIALS=true
+                
+            advertisement:
+              image: ${DOCKERHUB_USERNAME}/advertisement:latest
+              container_name: advertisement
+              restart: always
+              ports:
+                - "8082:8082"
+              environment:
+                - SERVER_PORT=8082
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
+                
+            identification:
+              image: ${DOCKERHUB_USERNAME}/identification:latest
+              container_name: identification
+              restart: always
+              ports:
+                - "8083:8083"
+              environment:
+                - SERVER_PORT=8083
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
+                
+            candidate:
+              image: ${DOCKERHUB_USERNAME}/candidate:latest
+              container_name: candidate
+              restart: always
+              ports:
+                - "8084:8084"
+              environment:
+                - SERVER_PORT=8084
+                - SPRING_DATASOURCE_URL=jdbc:postgresql://ecruitmentdb.cj0c262k28hj.eu-north-1.rds.amazonaws.com:5432/postgres
+                - SPRING_DATASOURCE_USERNAME=postgres
+                - SPRING_DATASOURCE_PASSWORD=RSIV1201VT25
+                
+            # AWS RDS is used instead of a local postgres container
+          EOL
+          
+          echo "Files in app directory:"
+          ls -la
+          
+          echo "docker-compose.yml contents:"
+          cat docker-compose.yml
+          
+          echo "env file contents:"
+          cat .env 
+          
+          # Hämta senaste images för de tjänster som ska uppdateras
+          echo "Pulling latest images for services: $SERVICES"
+          for service in $SERVICES; do
+            echo "Pulling latest image for $service..."
+            docker-compose pull $service
+          done
+          
+          # Starta om endast de tjänster som ska uppdateras
+          echo "Starting services: $SERVICES"
+          for service in $SERVICES; do
+            echo "Starting $service..."
+            docker-compose up -d --no-deps $service
+          done
+          
+          # Visa status för alla containers
+          echo "Current docker containers status:"
+          docker ps -a
+          
+          echo "Deployment completed for services: ${SERVICES_TO_RESTART}"

@@ -25,6 +25,7 @@ public class CandidateApplicationDAO {
     private LocalDate availableFrom;
     private LocalDate availableTo;
     private String status;
+    private String status;
 
     /**
      * Constructs a new CandidateApplicationDAO with the provided details.

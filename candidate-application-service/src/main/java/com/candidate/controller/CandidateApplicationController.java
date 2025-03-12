@@ -3,6 +3,7 @@ import com.candidate.dto.CandidateApplicationDTO;
 import com.candidate.service.CandidateApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.List;
@@ -25,10 +26,15 @@ public class CandidateApplicationController {
      */
     // Get all applications
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
         List<CandidateApplicationDTO.CandidateApplicationResponse> responses = candidateapplicationservice.getAllApplications();
         return ResponseEntity.ok(responses);
     }
+
+    // Get application by ID
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     /**
      * Retrieves a specific candidate application by its ID.
      *
@@ -42,6 +48,9 @@ public class CandidateApplicationController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+
+    // Apply for a position
     /**
      * Submits an application for a position.
      *
@@ -49,9 +58,11 @@ public class CandidateApplicationController {
      * @return A {@link ResponseEntity} containing the response after applying.
      */
     @PostMapping("/apply")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> applyForPosition(
             @RequestBody CandidateApplicationDTO.CandidateApplicationRequest request) {
         CandidateApplicationDTO.CandidateApplicationResponse response = candidateapplicationservice.applyForPosition(request);
         return ResponseEntity.ok(response);
     }
+
 }

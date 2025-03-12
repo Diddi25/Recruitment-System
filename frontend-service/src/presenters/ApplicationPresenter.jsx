@@ -1,4 +1,5 @@
 import { ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import ApplicationView from "@/views/ApplicationView";
 import candidateApplicationModel from "@/candidateApplicationModel";
 
@@ -122,3 +123,4 @@ export default function ApplicationPresenter() {
     </div>
   );
 }
+
