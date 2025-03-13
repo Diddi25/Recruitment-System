@@ -49,7 +49,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://advertisement:8082"))
+						.uri("http://localhost:8082"))
 				.route("identification_service", r -> r
 						.path("/api/identification/**", "/api/identification")
 						.filters(f -> f
@@ -61,9 +61,9 @@ public class ApiGatewayApplication {
 									}
 									return chain.filter(exchange);
 								})
-							 	.setResponseHeader("Access-Control-Allow-Origin", "http://ec2-16-170-206-244.eu-north-1.compute.amazonaws.com")
+							 	.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://identification:8083"))
+						.uri("http://localhost:8083"))
 				.route("candidate_application_service", r -> r
 						.path("/api/applications/**", "/api/applications") // Matches all requests to CandidateApplicationController
 						.filters(f -> f
