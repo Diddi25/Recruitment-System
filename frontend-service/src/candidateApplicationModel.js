@@ -1,5 +1,5 @@
-import { ref, onMounted } from "vue";
-import { candidateApplicationService } from "./services/api.js";
+/*import { ref, onMounted } from "vue";
+//import { candidateApplicationService } from "../services/api.js";
 
 const applications = ref([]);
 const applicationError = ref(null);
@@ -35,4 +35,4 @@ export default {
   applicationLoading,
   fetchApplications,
   submitApplication,
-};
+};*/

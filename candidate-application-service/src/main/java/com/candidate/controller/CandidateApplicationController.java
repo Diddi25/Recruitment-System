@@ -40,7 +40,6 @@ public class CandidateApplicationController {
      * @return A {@link ResponseEntity} containing the application details if found,
      *         or a 404 response if not found.
      */
-    @GetMapping("/{id}")      // Get application by ID
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
         return candidateapplicationservice.getApplicationById(id)
                 .map(ResponseEntity::ok)

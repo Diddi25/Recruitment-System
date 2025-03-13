@@ -1,7 +1,6 @@
 import { ref, onMounted } from "vue";
-import { ref, onMounted } from "vue";
 import ApplicationView from "@/views/ApplicationView";
-import candidateApplicationModel from "@/candidateApplicationModel";
+//import candidateApplicationModel from "@/candidateApplicationModel"; // Remove this one?
 
 export default function ApplicationPresenter() {
   const showForm = ref(true);

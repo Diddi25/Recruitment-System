@@ -1,5 +1,6 @@
 import { ref, onMounted, defineComponent } from 'vue';
-import { candidateApplicationService } from '../services/api.js';
+import { candidateApplicationService } from "@/services/resolvePromise.js";
+
 
 export default function ApplicationView(props) {
   // Predefined list of competence options
