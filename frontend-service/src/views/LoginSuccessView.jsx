@@ -5,11 +5,9 @@
  */
 export default function LoginSuccessView(props) {
 
-    const user = JSON.parse(localStorage.getItem('user'));
-
     function greetRoleACB() {
-        if(user) {
-            if(user.roles == "ROLE_USER") {
+        if(props.role) {
+            if(props.role == "ROLE_USER") {
                 return "Hi Candidate!"
             } else {
                 return "Hi Recruiter!"

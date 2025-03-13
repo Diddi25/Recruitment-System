@@ -1,4 +1,3 @@
-import { ref, onMounted } from "vue";
 import ApplicationView from "@/views/ApplicationView";
 
 /**
@@ -15,6 +14,7 @@ export default function ApplicationPresenter(props) {
   return (
     <div class="main">
       <ApplicationView
+        competenceOptions = {props.model.competenceOptions}
         onSubmit = {handleSubmit}
         errorMsg = {props.model.errorMessages.applicationSubmission}
       />

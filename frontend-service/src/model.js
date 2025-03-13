@@ -26,6 +26,11 @@ export default {
         status: 'unhandled'
     },
 
+    competenceOptions: [
+        { id: 1, name: "Ticket Sales" },
+        { id: 2, name: "Lotteries" },
+        { id: 3, name: "Roller Coaster Operation" },
+      ],
 
     applications: [], //Actual list containing all applications
     applicationError: null, //application error message
@@ -203,7 +208,10 @@ export default {
             return;
         }
         let usr = JSON.parse(localStorage.getItem('user'));
-        this.user.role = usr.role;
+        //console.log(usr);
+        if(usr.roles[0]) {
+            this.user.role = usr.roles[0];
+        }
         this.user.isLoggedIn = true;
     },
 

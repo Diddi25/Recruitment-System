@@ -4,13 +4,6 @@
  * @returns 
  */
 export default function ApplicationView(props) {
-  
-  const competenceOptions = [
-    { id: 1, name: "Ticket Sales" },
-    { id: 2, name: "Lotteries" },
-    { id: 3, name: "Roller Coaster Operation" },
-  ];
-
 
   let formData = {
     candidateName: "",
@@ -19,6 +12,12 @@ export default function ApplicationView(props) {
     availableFrom: "",
     availableTo: "",
   };
+
+  let competenceOptions = [
+    { id: 1, name: "Ticket Sales" },
+    { id: 2, name: "Lotteries" },
+    { id: 3, name: "Roller Coaster Operation" },
+  ];
 
   function getSubmissionErrorMsg(){
       if(props.errorMsg != null) {

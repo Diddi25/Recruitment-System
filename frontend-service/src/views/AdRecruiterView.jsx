@@ -1,7 +1,7 @@
 /**
- * Enables a recruiter to view all applications.
+ * Enables a recruiter to view all ads.
  * @param {*} props 
- * @returns An interface showing all applications.
+ * @returns An interface showing all ads.
  */
 export default function AdRecruiterView(props) {
     let ads = props.model.advertisements;

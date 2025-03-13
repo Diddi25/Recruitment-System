@@ -9,13 +9,14 @@ import LoginSuccessView from "@/views/LoginSuccessView";
  * @param {*} props The reactive model.
  * @returns A Presenter with a login button
  */
-export default function LoginPresenter(props) {
+export default function LoginPresenter(props) 
+{
     if(props.model.user.isLoggedIn != true) {
         return <div class="main"><LoginView errorMsg={props.model.errorMessages.loginSubmission} submitLoginCredentials={onSubmitLoginCredentials} 
         setUsernameValidationError={onInvalidUsername} setPasswordValidationError={onInvalidPassword}/></div>;
     }
     else {
-        return <div class="main"><LoginSuccessView/></div>
+        return <div class="main"><LoginSuccessView role={props.model.user.role}/></div>
     }
 
     function onSubmitLoginCredentials(username, password) {
