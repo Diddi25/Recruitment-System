@@ -33,6 +33,13 @@ public class CandidateApplicationController {
     // Get application by ID
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
+    /**
+     * Retrieves a specific candidate application by its ID.
+     *
+     * @param id The ID of the candidate application.
+     * @return A {@link ResponseEntity} containing the application details if found,
+     *         or a 404 response if not found.
+     */
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
         return candidateapplicationservice.getApplicationById(id)
                 .map(ResponseEntity::ok)
