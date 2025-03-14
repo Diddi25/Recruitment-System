@@ -8,7 +8,10 @@ import ApplicationView from "@/views/ApplicationView";
 export default function ApplicationPresenter(props) {
 
   function handleSubmit(formData) {
-    props.model.submitApplication(formData)
+    console.log(formData);
+    if(formData.candidateName) {
+      props.model.submitApplication(formData);
+    }
   }
 
   return (
