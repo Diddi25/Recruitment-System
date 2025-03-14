@@ -2,15 +2,14 @@ package com.candidate.dao;
 import com.candidate.dto.CandidateApplicationDTO;
 import com.candidate.model.CandidateApplicationModel;
 import com.candidate.exception.MappingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Utility class for mapping between different representations of candidate applications.
  * Converts between DTO, DAO, and Model layers.
  */
+@Slf4j
 public class CandidateApplicationMapper {
-    private static final Logger log = LoggerFactory.getLogger(CandidateApplicationMapper.class);
-
     /**
      * Converts a {@link CandidateApplicationDTO.CandidateApplicationRequest} to a {@link CandidateApplicationModel}.
      *

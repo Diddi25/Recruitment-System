@@ -6,9 +6,8 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 /**
- * Represents a candidate's job application.
- * This model contains details about the candidate, their skills,
- * experience, and availability.
+ * Represents a candidate's job application: contains details about the candidate,
+ * their skills, experience, and availability.
  */
 @Data
 @NoArgsConstructor

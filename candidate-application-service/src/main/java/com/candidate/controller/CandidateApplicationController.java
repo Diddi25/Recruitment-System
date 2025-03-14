@@ -22,7 +22,6 @@ public class CandidateApplicationController {
      *
      * @return A {@link ResponseEntity} containing a list of all candidate applications.
      */
-    // Get all applications
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
@@ -30,7 +29,6 @@ public class CandidateApplicationController {
         return ResponseEntity.ok(responses);
     }
 
-    // Get application by ID
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
     /**

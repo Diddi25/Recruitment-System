@@ -4,18 +4,16 @@ import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationRequest;
 import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationResponse;
 import org.springframework.stereotype.Component;
 import com.candidate.exception.MappingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Mapper component for converting between {@link CandidateApplicationDTO} and {@link CandidateApplicationModel}.
  * Facilitates transformations between DTOs and business logic models.
  */
+@Slf4j
 @Component
 public class CandidateApplicationMapper {
-
-    private static final Logger log = LoggerFactory.getLogger(CandidateApplicationMapper.class);
-
     /**
      * Converts a {@link CandidateApplicationRequest} DTO into a {@link CandidateApplicationModel}.
      *

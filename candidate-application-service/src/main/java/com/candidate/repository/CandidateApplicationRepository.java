@@ -5,7 +5,7 @@ import com.candidate.dao.CandidateApplicationDAO;
 import com.candidate.model.CandidateApplicationModel;
 
 /**
- * Repository interface for managing candidate applications in the database.
+ * Repository interface for managing candidate applications; {@link CandidateApplicationDAO} entities in the database.
  * Extends {@link JpaRepository} to provide CRUD operations.
  */
 @Repository
