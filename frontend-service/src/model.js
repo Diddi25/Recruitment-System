@@ -4,7 +4,7 @@ import store from './store/storeIndex.js';
 /**
  * The model represents the current state of the application.
  */
-export default {
+export default{
     
     user: {username: null, password: null, isLoggedIn: null, role: null}, //user information used to render Views
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input flags
@@ -176,7 +176,6 @@ export default {
      * @param {*} userInfo 
     */
     async submitRegistrationInfo(userInfo) {
-        let data = userInfo;
         let result = "";
         try {
             result = await store.dispatch("auth/register", userInfo);
@@ -207,8 +206,8 @@ export default {
             this.errorMessages.loginSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
-        let usr = JSON.parse(localStorage.getItem('user'));
-        //console.log(usr);
+        let usr = JSON.parse(sessionStorage.getItem('user'));
+
         if(usr.roles[0]) {
             this.user.role = usr.roles[0];
         }
@@ -252,5 +251,16 @@ export default {
             }
         }
         this.user.isLoggedIn = false;
-    }
+    },
+
+    getAuthenticatedState() {
+        this.user.isLoggedIn = store.state.auth.status.loggedIn;
+        let usr = JSON.parse(sessionStorage.getItem('user'));
+        if(!usr) {
+            return;
+        }
+        if(usr.roles[0]) {
+            this.user.role = usr.roles[0];
+        }
+    },
 }

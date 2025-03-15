@@ -1,4 +1,3 @@
-import { ref } from 'vue';
 import ApplicationListView from "@/views/ApplicationListView";
 
 /**
@@ -7,7 +6,6 @@ import ApplicationListView from "@/views/ApplicationListView";
  * @returns an Application List Presenter.
  */
 export default function ApplicationListPresenter(props) {
-    const showApplications = ref(true);
 
     function fetchApplicationsACB() {
         props.model.fetchAdvertisements();
@@ -19,10 +17,6 @@ export default function ApplicationListPresenter(props) {
 
     function goToPreviousPageACB() {
         props.model.goToPreviousPage();
-    }
-
-    function closeApplications() {
-        showApplications.value = false;  // Hide applications when closing, but its currently not used.
     }
 
     return (

@@ -1,6 +1,6 @@
 
 export default function authHeader() {
-  let user = JSON.parse(localStorage.getItem('user')); //returns JSON string, parsed into js object
+  let user = JSON.parse(sessionStorage.getItem('user')); //returns JSON string, parsed into js object
 
   if (user && user.accessToken) { //if user exists
     // for Spring Boot back-end

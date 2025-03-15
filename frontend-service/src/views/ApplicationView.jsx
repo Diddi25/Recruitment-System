@@ -30,7 +30,8 @@ export default function ApplicationView(props) {
             <div>
               <h3>Fill in your details</h3>
               <form onSubmit={(e) => {e.preventDefault();
-                props.onSubmit(formData);}}>
+                props.onSubmit(formData);
+                }}>
                 <div>
                   <label>Full Name:</label><br />
                   <input type="text" v-model={formData.candidateName} required />

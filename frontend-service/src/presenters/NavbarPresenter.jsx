@@ -6,6 +6,11 @@ import NavbarView from "@/views/NavbarView";
  * @returns A navigation bar presenter.
  */
 export default function NavbarPresenter(props) {
+
+    window.onload = (e) => {
+        props.model.getAuthenticatedState();
+    } 
+
     return (<div class="main">
                 <NavbarView isLoggedIn = {props.model.user.isLoggedIn} role={props.model.user.role} logoutACB={logout}
                 />
@@ -14,4 +19,6 @@ export default function NavbarPresenter(props) {
     function logout() {
         props.model.logoutUser();
     }
+    
+
 }

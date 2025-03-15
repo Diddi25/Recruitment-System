@@ -15,8 +15,7 @@ export default function NavbarView(props) {
 
     if(props.isLoggedIn) {
         return (<div class="navbar">
-                    <button onClick={props.logoutACB}>Logout</button>
-                    <RouterLink to="/login-success">User</RouterLink>
+                    <button onClick={logout}>Logout</button>
                     {roleBasedAccess()}
                 </div>)
         ;
@@ -26,5 +25,10 @@ export default function NavbarView(props) {
                      <RouterLink to="/register">Register</RouterLink>
                  </div>)
         ;
+    }
+
+    function logout() {
+        props.logoutACB();
+        window.location.href = "/";
     }
 }

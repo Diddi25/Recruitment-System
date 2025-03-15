@@ -14,7 +14,7 @@ class AuthService {
       })
       .then(response => {
         if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
+          sessionStorage.setItem('user', JSON.stringify(response.data));
         }
         return response.data;
       });
@@ -24,14 +24,13 @@ class AuthService {
 * Logs out the current user.
 */
   logout() {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
   }
 
 /*
 * Registers an user.
 */
   register(user) {
-    console.log("Registration request:", user);
     return axios.post(API_URL + '/identification/register', {
         name: user.name,
         surname: user.lastname,
@@ -40,7 +39,6 @@ class AuthService {
         username: user.username,
         password: user.password,
     }).then(response => {
-        console.log("Registration response:", response);
         return response.data;
     });
   }
