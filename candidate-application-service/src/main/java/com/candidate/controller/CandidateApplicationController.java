@@ -22,15 +22,15 @@ public class CandidateApplicationController {
      *
      * @return A {@link ResponseEntity} containing a list of all candidate applications.
      */
-    @GetMapping("/all")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
+   @GetMapping("/all")
+   @PreAuthorize("hasRole('ROLE_RECRUITER')")
+   public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
         List<CandidateApplicationDTO.CandidateApplicationResponse> responses = candidateapplicationservice.getAllApplications();
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    ///GetMapping("/{id}")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     /**
      * Retrieves a specific candidate application by its ID.
      *
@@ -38,11 +38,11 @@ public class CandidateApplicationController {
      * @return A {@link ResponseEntity} containing the application details if found,
      *         or a 404 response if not found.
      */
-    public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
+    /*public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
         return candidateapplicationservice.getApplicationById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    }*/
     /**
      * Submits an application for a position.
      *
