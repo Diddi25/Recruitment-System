@@ -6,7 +6,7 @@ import store from './store/storeIndex.js';
  */
 export default {
     
-    user: {username: null, password: null, isLoggedIn: null, role: null}, //user information used to render Views
+    user: {username: null, password: null, isLoggedIn: null, role: null, id: null}, //user information used to render Views
     flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input flags
     errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null}, //contains all possible error messages
 
@@ -208,9 +208,12 @@ export default {
             return;
         }
         let usr = JSON.parse(localStorage.getItem('user'));
-        //console.log(usr);
+        console.log(usr);
         if(usr.roles[0]) {
             this.user.role = usr.roles[0];
+        }
+        if(usr.id) {
+            this.user.id = usr.id;
         }
         this.user.isLoggedIn = true;
     },
