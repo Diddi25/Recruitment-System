@@ -159,6 +159,8 @@ export default {
      * @returns 
      */
     async submitApplication(formData) {
+        formData.id = this.user.id;
+        console.log(formData);
         try {
             const response = await candidateApplicationService.applyForPosition(formData);
         } catch (error) {
