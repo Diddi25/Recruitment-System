@@ -29,6 +29,7 @@ public class CandidateApplicationDTO {
         private BigDecimal experienceYears;
         private LocalDate availableFrom;
         private LocalDate availableTo;
+        private String id;
     }
 
     /**
