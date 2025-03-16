@@ -7,7 +7,7 @@ import store from './store/storeIndex.js';
 export default{
     
     user: {username: null, password: null, isLoggedIn: null, role: null}, //user information used to render Views
-    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input flags
+    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input validation flags
     errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null}, //contains all possible error messages
 
     advertisementContent: [], // Actual list of advertisements (from content array)
@@ -253,6 +253,11 @@ export default{
         this.user.isLoggedIn = false;
     },
 
+    /**
+     * Checks the current state of authentication that is stored in the Vue store
+     * and updates the state in the model.
+     * @returns 
+     */
     getAuthenticatedState() {
         this.user.isLoggedIn = store.state.auth.status.loggedIn;
         let usr = JSON.parse(sessionStorage.getItem('user'));

@@ -13,12 +13,6 @@ export default function ApplicationView(props) {
     availableTo: "",
   };
 
-  let competenceOptions = [
-    { id: 1, name: "Ticket Sales" },
-    { id: 2, name: "Lotteries" },
-    { id: 3, name: "Roller Coaster Operation" },
-  ];
-
   function getSubmissionErrorMsg(){
       if(props.errorMsg != null) {
           return (<div class="submissionErrorMsg">{props.errorMsg}</div>);
@@ -41,7 +35,7 @@ export default function ApplicationView(props) {
                 <label>Competence Profile:</label><br />
                 <select v-model={formData.skills} required>
                 <option value="">Select a position</option>
-                {competenceOptions.map((comp) => (
+                {props.competenceOptions.map((comp) => (
                   <option key={comp.id} value={comp.name}>{comp.name}</option>
                 ))}
                 </select>
