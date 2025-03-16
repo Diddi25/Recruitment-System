@@ -31,7 +31,7 @@ public class CandidateApplicationService {
     /**
      * Submits a new candidate application.
      */
-    @Transactional
+   // @Transactional
     public CandidateApplicationResponse applyForPosition(CandidateApplicationRequest request) {
         log.info("Processing candidate application for: {}", request.getCandidateName());
 
@@ -44,11 +44,12 @@ public class CandidateApplicationService {
         // Save application to database
         CandidateApplicationDAO savedDAO = candidateApplicationRepository.save(candidateDAO);
         log.info("Candidate application submitted with ID: {}", savedDAO.getId());
+        log.info(savedDAO.toString());
 
         // Convert saved entity to response DTO
         return candidateApplicationMapper.toResponse(savedDAO);
     }
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     public List<CandidateApplicationDTO.CandidateApplicationResponse> getAllApplications() {
         log.info("Fetching all candidate applications (Recruiter Access Only)");
 

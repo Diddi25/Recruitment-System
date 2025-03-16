@@ -45,15 +45,15 @@ public class CandidateApplicationDAO {
     @Column(name = "username")
     private String username;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "competence_profile_id")
     private CompetenceProfileDao competenceProfileDao;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "competence_id")
     private CompetenceDao competence;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "availability_id")
     private AvailabilityDao availability;
 
