@@ -16,10 +16,12 @@ public class CandidateApplicationMapper {
 
     public CandidateApplicationModel toModel(CandidateApplicationRequest request) {
         String[] nameParts = NameUtils.parseFullName(request.getCandidateName());
+        log.info("SENT TO MODEL" + request.toString());
         return CandidateApplicationModel.builder()
                 .firstName(nameParts[0])  // Extract first name, then last name
                 .lastName(nameParts[1])
                 .skills(request.getSkills())
+                .personId(request.getPersonId())
                 .experienceYears(request.getExperienceYears())
                 .availableFrom(request.getAvailableFrom())
                 .availableTo(request.getAvailableTo())
@@ -27,13 +29,15 @@ public class CandidateApplicationMapper {
                 .build();
     }
 
-    public CandidateApplicationDAO toDao(CandidateApplicationModel model) {
+   public CandidateApplicationDAO toDao(CandidateApplicationModel model) {
+        final Integer personId = model.getPersonId();
         return CandidateApplicationDAO.builder()
-                .id(model.getId())
+                .personId(personId)
                 .firstName(model.getFirstName())
                 .lastName(model.getLastName())
                 .availability(model.getAvailableFrom() != null && model.getAvailableTo() != null ?
                         AvailabilityDao.builder()
+                                .personId(personId)
                                 .fromDate(model.getAvailableFrom())
                                 .toDate(model.getAvailableTo())
                                 .build() : null)
@@ -45,13 +49,37 @@ public class CandidateApplicationMapper {
                         CompetenceProfileDao.builder()
                                 .experienceYears(model.getExperienceYears())
                                 .status(model.getStatus())
+                                .personId(personId)
                                 .build() : null)
+                .build();
+    }
+
+    public CompetenceDao competenceToDao(CandidateApplicationModel model) {
+        return CompetenceDao.builder()
+                .skills(model.getSkills())
+                .build();
+    }
+
+    public CompetenceProfileDao competenceProfileToDao(CandidateApplicationModel model) {
+        return  CompetenceProfileDao.builder()
+                .experienceYears(model.getExperienceYears())
+                .status(model.getStatus())
+                .personId(model.getPersonId())
+                .competenceId(2) //This should be fixed
+                .build();
+    }
+
+    public AvailabilityDao availabilityToDao(CandidateApplicationModel model) {
+        return AvailabilityDao.builder()
+                .personId(model.getPersonId())
+                .fromDate(model.getAvailableFrom())
+                .toDate(model.getAvailableTo())
                 .build();
     }
 
     public CandidateApplicationDTO.CandidateApplicationResponse toResponse(CandidateApplicationDAO savedDAO) {
         return CandidateApplicationDTO.CandidateApplicationResponse.builder()
-                .id(savedDAO.getId())
+                .personId(savedDAO.getPersonId())
                 .firstName(savedDAO.getFirstName())
                 .lastName(savedDAO.getLastName())
                 .statusMessage("Application submitted successfully")

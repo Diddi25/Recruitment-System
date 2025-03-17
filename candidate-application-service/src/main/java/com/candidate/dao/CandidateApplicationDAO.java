@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 
-
-
 /**
  * Entity representing a candidate's job application stored in the database.
  * This class is mapped to the `candidate_applications` table.
@@ -25,7 +23,7 @@ public class CandidateApplicationDAO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    private Integer id;
+    private Integer personId;
 
     @Column(name = "name")
     private String firstName;

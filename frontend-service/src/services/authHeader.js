@@ -1,3 +1,6 @@
+/*
+* The auth header contains the information required to authenticate a user.
+*/
 
 export default function authHeader() {
   let user = JSON.parse(localStorage.getItem('user')); //returns JSON string, parsed into js object

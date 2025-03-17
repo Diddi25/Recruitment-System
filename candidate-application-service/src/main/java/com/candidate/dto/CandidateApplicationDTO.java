@@ -29,7 +29,7 @@ public class CandidateApplicationDTO {
         private BigDecimal experienceYears;
         private LocalDate availableFrom;
         private LocalDate availableTo;
-        private String id;
+        private Integer personId;
     }
 
     /**
@@ -41,7 +41,7 @@ public class CandidateApplicationDTO {
     @AllArgsConstructor
     @Builder
     public static class CandidateApplicationResponse {
-        private Integer id;
+        private Integer personId;
         private String firstName;
         private String lastName;
         private String statusMessage;
