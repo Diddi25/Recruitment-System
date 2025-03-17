@@ -96,7 +96,7 @@ public class CandidateApplicationMapper {
             }
 
             return CandidateApplicationDTO.CandidateApplicationResponse.builder()
-                    .id(Math.toIntExact(savedDAO.getId())) // Long -> Integer
+                    .id((long) Math.toIntExact(savedDAO.getId())) // Long -> Integer
                     .firstName(savedDAO.getFirstName())
                     .lastName(savedDAO.getLastName())
                     .statusMessage("Application submitted successfully. Status: " +

@@ -31,6 +31,7 @@ public class CandidateApplicationDTO {
         private LocalDate availableTo;
         //private String id;
         private String personId;
+
     }
 
     /**

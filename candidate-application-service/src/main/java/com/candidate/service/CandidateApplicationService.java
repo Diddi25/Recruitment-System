@@ -54,7 +54,7 @@ public class CandidateApplicationService {
 
             // Save application to database
             CandidateApplicationDAO savedDAO = candidateapplicationrepository.save(candidateDAO);
-            log.info("Candidate application submitted with ID: {}", savedDAO.getPersonId());
+            log.info("Candidate application submitted with Person ID: {}", savedDAO.getId());
 
             // Convert saved entity to response DTO
             return candidateApplicationMapper.toResponse(savedDAO);
