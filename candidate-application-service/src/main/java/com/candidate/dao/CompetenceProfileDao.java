@@ -7,6 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
+/**
+ * Entity class representing a competence profile.
+ * This class is mapped to the `competence_profile` table in the database.
+ */
 @Entity
 @Table(name = "competence_profile")
 @Data
@@ -25,6 +29,9 @@ public class CompetenceProfileDao {
 
     @Column(name = "competence_id")
     private Integer competenceId;
+
+    @Column(name = "skills")
+    private String skills;  // Lagra kompetens som en sträng (JSON/kommaseparerad)
 
     @Column(name = "years_of_experience")
     private BigDecimal experienceYears;

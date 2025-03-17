@@ -9,14 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Entity representing a candidate's job application stored in the database.
- * This class is mapped to the `candidate_applications` table.
+ * This class is mapped to the `person` table.
  */
-
 @Entity
 @Table(name = "person")
 @Data
 @NoArgsConstructor
-@Slf4j
 @AllArgsConstructor
 @Builder
 public class CandidateApplicationDAO {

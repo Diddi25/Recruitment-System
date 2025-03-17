@@ -17,6 +17,7 @@ public class CandidateApplicationMapper {
     public CandidateApplicationModel toModel(CandidateApplicationRequest request) {
         String[] nameParts = NameUtils.parseFullName(request.getCandidateName());
         log.info("SENT TO MODEL" + request.toString());
+
         return CandidateApplicationModel.builder()
                 .firstName(nameParts[0])  // Extract first name, then last name
                 .lastName(nameParts[1])
@@ -29,7 +30,7 @@ public class CandidateApplicationMapper {
                 .build();
     }
 
-   public CandidateApplicationDAO toDao(CandidateApplicationModel model) {
+    public CandidateApplicationDAO toDao(CandidateApplicationModel model) {
         final Integer personId = model.getPersonId();
         return CandidateApplicationDAO.builder()
                 .personId(personId)
@@ -59,13 +60,12 @@ public class CandidateApplicationMapper {
                 .skills(model.getSkills())
                 .build();
     }
-
-    public CompetenceProfileDao competenceProfileToDao(CandidateApplicationModel model) {
-        return  CompetenceProfileDao.builder()
+    public CompetenceProfileDao competenceProfileToDao(CandidateApplicationModel model, Integer competenceId) {
+        return CompetenceProfileDao.builder()
                 .experienceYears(model.getExperienceYears())
                 .status(model.getStatus())
                 .personId(model.getPersonId())
-                .competenceId(2) //This should be fixed
+                .competenceId(competenceId) // Now dynamically assigned
                 .build();
     }
 

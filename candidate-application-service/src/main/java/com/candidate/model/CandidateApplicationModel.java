@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CandidateApplicationModel {
-    private Integer personId;
+    Integer personId;
     private String skills;
     private BigDecimal experienceYears;
     private LocalDate availableFrom;

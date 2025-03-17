@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Mapper component for converting between {@link CandidateApplicationDTO} and {@link CandidateApplicationModel}.
  * Facilitates transformations between DTOs and business logic models.
@@ -35,7 +36,8 @@ public class CandidateApplicationMapper {
                 .status("unhandled")
                 .build();
     }
-    /**
+
+     /**
      * Converts a CandidateApplicationDAO entity to a CandidateApplicationResponse DTO.
      *
      * @param dao the CandidateApplicationDAO entity retrieved from the database

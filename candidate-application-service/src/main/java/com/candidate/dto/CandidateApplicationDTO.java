@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO (Data Transfer Object) container class for candidate applications.
  * Defines request and response structures for API interactions.
  */
-
 public class CandidateApplicationDTO {
 
     /**
@@ -36,6 +36,7 @@ public class CandidateApplicationDTO {
      * DTO for responding to a candidate application request.
      * Contains information returned from the API.
      */
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -44,6 +45,9 @@ public class CandidateApplicationDTO {
         private Integer personId;
         private String firstName;
         private String lastName;
+        private String skills; // Lägg till kompetenser i responsen
         private String statusMessage;
     }
 }
+
+

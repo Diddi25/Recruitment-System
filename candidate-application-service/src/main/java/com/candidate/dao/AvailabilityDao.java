@@ -6,6 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDate;
 
+
+/**
+ * Entity class representing availability data for a person.
+ * This class maps to the "availability" table in the database.
+ */
+
 @Entity
 @Table(name = "availability")
 @Data

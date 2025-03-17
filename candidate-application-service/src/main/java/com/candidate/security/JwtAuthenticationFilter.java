@@ -28,6 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * JWT authentication filter for processing and validating JWT tokens in HTTP requests.
+ * Extracts user information and roles from valid JWT tokens and sets authentication context.
+ */
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -36,6 +40,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Filters incoming HTTP requests to check for a valid JWT token.
+     * If valid, extracts user details and sets authentication context.
+     * @param request     the HTTP request.
+     * @param response    the HTTP response.
+     * @param filterChain the filter chain to continue processing.
+     * @throws ServletException if a servlet error occurs.
+     * @throws IOException      if an I/O error occurs.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -73,12 +86,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Extracts user roles from JWT token Claims and converts them to SimpleGrantedAuthority objects.
-     *
-     * @param claims Claims object from decrypted JWT token
-     * @return A collection of SimpleGrantedAuthority objects representing the user's roles
-     */
     @SuppressWarnings("unchecked")
     private Collection<SimpleGrantedAuthority> extractAuthorities(Claims claims) {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
