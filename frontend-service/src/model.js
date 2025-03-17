@@ -185,7 +185,7 @@ export default{
             this.errorMessages.registerSubmission = error.response?.data?.message || error.message || error.toString();
             return;
         }
-        this.errorMessages.registerSubmission = "User registration was successfull";
+        this.errorMessages.registerSubmission = "User registration was successful";
     },
     
 
