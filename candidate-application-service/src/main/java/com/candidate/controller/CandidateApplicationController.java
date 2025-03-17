@@ -1,10 +1,12 @@
 package com.candidate.controller;
 import com.candidate.dto.CandidateApplicationDTO;
 import com.candidate.service.CandidateApplicationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -22,15 +24,12 @@ public class CandidateApplicationController {
      *
      * @return A {@link ResponseEntity} containing a list of all candidate applications.
      */
-   @GetMapping("/all")
-   @PreAuthorize("hasRole('ROLE_RECRUITER')")
-   public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_RECRUITER')")
+    public ResponseEntity<List<CandidateApplicationDTO.CandidateApplicationResponse>> getAllApplications() {
         List<CandidateApplicationDTO.CandidateApplicationResponse> responses = candidateapplicationservice.getAllApplications();
         return ResponseEntity.ok(responses);
     }
-
-    ///GetMapping("/{id}")
-    //@PreAuthorize("hasRole('ROLE_USER')")
     /**
      * Retrieves a specific candidate application by its ID.
      *
@@ -38,11 +37,14 @@ public class CandidateApplicationController {
      * @return A {@link ResponseEntity} containing the application details if found,
      *         or a 404 response if not found.
      */
-    /*public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
+    /*@GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> getApplicationById(@PathVariable Integer id) {
         return candidateapplicationservice.getApplicationById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }*/
+    } */
+
     /**
      * Submits an application for a position.
      *
@@ -52,9 +54,9 @@ public class CandidateApplicationController {
     @PostMapping("/apply")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<CandidateApplicationDTO.CandidateApplicationResponse> applyForPosition(
-            @RequestBody CandidateApplicationDTO.CandidateApplicationRequest request) {
+            @Valid @RequestBody CandidateApplicationDTO.CandidateApplicationRequest request) {
+        System.out.println("Received application request: " + request);
         CandidateApplicationDTO.CandidateApplicationResponse response = candidateapplicationservice.applyForPosition(request);
         return ResponseEntity.ok(response);
     }
-
 }

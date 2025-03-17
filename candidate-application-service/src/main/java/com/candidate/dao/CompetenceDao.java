@@ -8,6 +8,7 @@ import lombok.Builder;
 
 /**
  * Entity class representing a competence.
+ * This class is mapped to the `competence` table in the database.
  */
 @Entity
 @Table(name = "competence")

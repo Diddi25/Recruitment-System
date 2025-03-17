@@ -7,6 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
+/**
+ * Entity class representing a competence profile.
+ * This class is mapped to the `competence_profile` table in the database.
+ */
 @Entity
 @Table(name = "competence_profile")
 @Data

@@ -5,10 +5,11 @@ import com.candidate.dao.CandidateApplicationDAO;
 
 
 /**
- * Repository interface for managing candidate applications; {@link CandidateApplicationDAO} entities in the database.
- * Extends {@link JpaRepository} to provide CRUD operations.
+ * Repository interface for managing candidate applications.
+ * Provides CRUD operations for {@link CandidateApplicationDAO} entities in the database.
+ * Extends {@link JpaRepository} to leverage Spring Data JPA functionalities.
  */
 @Repository
 public interface CandidateApplicationRepository extends JpaRepository<CandidateApplicationDAO, Integer> {
-
 }
+

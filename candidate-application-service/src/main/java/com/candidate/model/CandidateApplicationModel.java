@@ -24,6 +24,7 @@ public class CandidateApplicationModel {
     private String status;
     private String firstName;
     private String lastName;
+    private Long personId;
 
     // Not stored, but used for parsing
     private String candidateName;
