@@ -45,7 +45,7 @@ public class CandidateApplicationMapper {
      */
     public CandidateApplicationResponse toResponse(CandidateApplicationDAO dao) {
         return CandidateApplicationResponse.builder()
-                //.id(dao.getId())
+                .personId(dao.getPersonId())
                 .firstName(dao.getFirstName())
                 .lastName(dao.getLastName())
                 .statusMessage("Application submitted successfully")

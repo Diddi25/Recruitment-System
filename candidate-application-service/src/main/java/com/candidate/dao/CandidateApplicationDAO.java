@@ -23,7 +23,7 @@ public class CandidateApplicationDAO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    private Long id;
+    private Integer personId;
 
     @Column(name = "name")
     private String firstName;

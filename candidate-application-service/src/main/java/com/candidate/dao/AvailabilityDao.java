@@ -23,7 +23,7 @@ public class AvailabilityDao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "availability_id")
-    private Integer id;
+    private Integer availabilityId;
 
     @Column(name = "person_id")
     private Integer personId;

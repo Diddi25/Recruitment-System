@@ -1,6 +1,5 @@
 package com.candidate.dao;
 import com.candidate.dto.CandidateApplicationDTO;
-import com.candidate.exception.MappingException;
 import com.candidate.model.CandidateApplicationModel;
 import com.candidate.util.NameUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,97 +14,75 @@ import org.springframework.stereotype.Component;
 @Component
 public class CandidateApplicationMapper {
 
-    /**
-     * Converts a CandidateApplicationRequest DTO to a CandidateApplicationModel.
-     *
-     * @param request The request DTO containing candidate details.
-     * @return The converted CandidateApplicationModel instance.
-     * @throws MappingException if the request data is invalid or incomplete.
-     */
     public CandidateApplicationModel toModel(CandidateApplicationRequest request) {
-        try {
-            if (request.getCandidateName() == null || request.getCandidateName().isEmpty()) {
-                throw new MappingException("Candidate name cannot be null or empty.");
-            }
+        String[] nameParts = NameUtils.parseFullName(request.getCandidateName());
+        log.info("SENT TO MODEL" + request.toString());
 
-            String[] nameParts = NameUtils.parseFullName(request.getCandidateName());
-
-            return CandidateApplicationModel.builder()
-                    .firstName(nameParts.length > 0 ? nameParts[0] : "Unknown")
-                    .lastName(nameParts.length > 1 ? nameParts[1] : "Unknown")
-                    .skills(request.getSkills())
-                    .experienceYears(request.getExperienceYears())
-                    .availableFrom(request.getAvailableFrom())
-                    .availableTo(request.getAvailableTo())
-                    .personId(Long.parseLong(request.getPersonId()))
-                    .status("unhandled") // Default status for new applications
-                    .build();
-        } catch (Exception e) {
-            log.error("Error mapping CandidateApplicationRequest to CandidateApplicationModel: {}", e.getMessage());
-            throw new MappingException("Failed to map candidate application request.", e);
-        }
+        return CandidateApplicationModel.builder()
+                .firstName(nameParts[0])  // Extract first name, then last name
+                .lastName(nameParts[1])
+                .skills(request.getSkills())
+                .personId(request.getPersonId())
+                .experienceYears(request.getExperienceYears())
+                .availableFrom(request.getAvailableFrom())
+                .availableTo(request.getAvailableTo())
+                .status("unhandled") // Default status for new applications
+                .build();
     }
 
-    /**
-     * Converts a CandidateApplicationModel to a CandidateApplicationDAO entity.
-     * @param model The CandidateApplicationModel instance.
-     * @return The converted CandidateApplicationDAO instance.
-     * @throws MappingException if the model data is invalid or incomplete.
-     */
     public CandidateApplicationDAO toDao(CandidateApplicationModel model) {
-        try {
-            if (model == null) {
-                throw new MappingException("CandidateApplicationModel cannot be null.");
-            }
-
-            return CandidateApplicationDAO.builder()
-                    .id(Long.valueOf(model.getId()))
-                    .firstName(model.getFirstName())
-                    .lastName(model.getLastName())
-                    .availability(model.getAvailableFrom() != null && model.getAvailableTo() != null ?
-                            AvailabilityDao.builder()
-                                    .fromDate(model.getAvailableFrom())
-                                    .toDate(model.getAvailableTo())
-                                    .build() : null)
-                    .competence(model.getSkills() != null ?
-                            CompetenceDao.builder()
-                                    .skills(model.getSkills())
-                                    .build() : null)
-                    .competenceProfileDao(model.getExperienceYears() != null ?
-                            CompetenceProfileDao.builder()
-                                    .experienceYears(model.getExperienceYears())
-                                    .status(model.getStatus())
-                                    .build() : null)
-                    .build();
-        } catch (Exception e) {
-            log.error("Error mapping CandidateApplicationModel to CandidateApplicationDAO: {}", e.getMessage());
-            throw new MappingException("Failed to map candidate application model.", e);
-        }
+        final Integer personId = model.getPersonId();
+        return CandidateApplicationDAO.builder()
+                .personId(personId)
+                .firstName(model.getFirstName())
+                .lastName(model.getLastName())
+                .availability(model.getAvailableFrom() != null && model.getAvailableTo() != null ?
+                        AvailabilityDao.builder()
+                                .personId(personId)
+                                .fromDate(model.getAvailableFrom())
+                                .toDate(model.getAvailableTo())
+                                .build() : null)
+                .competence(model.getSkills() != null ?
+                        CompetenceDao.builder()
+                                .skills(model.getSkills())
+                                .build() : null)
+                .competenceProfileDao(model.getExperienceYears() != null ?
+                        CompetenceProfileDao.builder()
+                                .experienceYears(model.getExperienceYears())
+                                .status(model.getStatus())
+                                .personId(personId)
+                                .build() : null)
+                .build();
     }
-    /**
-     * Converts a CandidateApplicationDAO entity to a CandidateApplicationResponse DTO.
-     *
-     * @param savedDAO The saved CandidateApplicationDAO entity.
-     * @return The corresponding CandidateApplicationResponse DTO.
-     * @throws MappingException if the saved entity data is invalid or incomplete.
-     */
-    public CandidateApplicationDTO.CandidateApplicationResponse toResponse(CandidateApplicationDAO savedDAO) {
-        try {
-            if (savedDAO == null) {
-                throw new MappingException("CandidateApplicationDAO cannot be null.");
-            }
 
-            return CandidateApplicationDTO.CandidateApplicationResponse.builder()
-                    .id((long) Math.toIntExact(savedDAO.getId())) // Long -> Integer
-                    .firstName(savedDAO.getFirstName())
-                    .lastName(savedDAO.getLastName())
-                    .statusMessage("Application submitted successfully. Status: " +
-                            (savedDAO.getCompetenceProfileDao() != null ?
-                                    savedDAO.getCompetenceProfileDao().getStatus() : "unhandled"))
-                    .build();
-        } catch (Exception e) {
-            log.error("Error mapping CandidateApplicationDAO to CandidateApplicationResponse: {}", e.getMessage());
-            throw new MappingException("Failed to map candidate application entity to response.", e);
-        }
+    public CompetenceDao competenceToDao(CandidateApplicationModel model) {
+        return CompetenceDao.builder()
+                .skills(model.getSkills())
+                .build();
+    }
+    public CompetenceProfileDao competenceProfileToDao(CandidateApplicationModel model, Integer competenceId) {
+        return CompetenceProfileDao.builder()
+                .experienceYears(model.getExperienceYears())
+                .status(model.getStatus())
+                .personId(model.getPersonId())
+                .competenceId(competenceId) // Now dynamically assigned
+                .build();
+    }
+
+    public AvailabilityDao availabilityToDao(CandidateApplicationModel model) {
+        return AvailabilityDao.builder()
+                .personId(model.getPersonId())
+                .fromDate(model.getAvailableFrom())
+                .toDate(model.getAvailableTo())
+                .build();
+    }
+
+    public CandidateApplicationDTO.CandidateApplicationResponse toResponse(CandidateApplicationDAO savedDAO) {
+        return CandidateApplicationDTO.CandidateApplicationResponse.builder()
+                .personId(savedDAO.getPersonId())
+                .firstName(savedDAO.getFirstName())
+                .lastName(savedDAO.getLastName())
+                .statusMessage("Application submitted successfully")
+                .build();
     }
 }

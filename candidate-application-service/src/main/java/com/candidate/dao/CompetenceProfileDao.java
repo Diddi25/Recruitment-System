@@ -30,6 +30,9 @@ public class CompetenceProfileDao {
     @Column(name = "competence_id")
     private Integer competenceId;
 
+    @Column(name = "skills")
+    private String skills;  // Lagra kompetens som en sträng (JSON/kommaseparerad)
+
     @Column(name = "years_of_experience")
     private BigDecimal experienceYears;
 

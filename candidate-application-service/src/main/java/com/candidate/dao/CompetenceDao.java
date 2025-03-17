@@ -21,7 +21,7 @@ public class CompetenceDao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "competence_id")
-    private Integer id;
+    private Integer competenceId;
 
     @Column(name = "name")
     private String skills;

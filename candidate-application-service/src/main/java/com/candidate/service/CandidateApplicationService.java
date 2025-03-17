@@ -1,23 +1,21 @@
 package com.candidate.service;
 
 import com.candidate.dao.CandidateApplicationDAO;
+import com.candidate.dao.AvailabilityDao;
+import com.candidate.dao.CompetenceDao;
+import com.candidate.dao.CompetenceProfileDao;
 import com.candidate.dao.CandidateApplicationMapper;
-import com.candidate.dto.CandidateApplicationDTO;
 import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationRequest;
 import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationResponse;
-import com.candidate.exception.DatabaseException;
-import com.candidate.exception.MappingException;
-import com.candidate.exception.ServiceException;
 import com.candidate.repository.CandidateApplicationRepository;
+import com.candidate.repository.AvailabilityRepository;
+import com.candidate.repository.CompetenceProfileRepository;
+import com.candidate.repository.CompetenceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.candidate.model.CandidateApplicationModel;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service class for handling candidate applications.
@@ -28,63 +26,66 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CandidateApplicationService {
 
-    private final CandidateApplicationRepository candidateapplicationrepository;
+    private final CandidateApplicationRepository candidateApplicationRepository;
+    private final AvailabilityRepository availabilityRepository;
+    private final CompetenceProfileRepository competenceProfileRepository;
     private final CandidateApplicationMapper candidateApplicationMapper;
+    private final CompetenceRepository competenceRepository;
 
     /**
      * Submits a new candidate application.
-     *
-     * @param request The {@link CandidateApplicationRequest} containing application details.
-     * @return A {@link CandidateApplicationResponse} containing the saved application details.
      */
-    @Transactional
-    public CandidateApplicationResponse applyForPosition(CandidateApplicationRequest request) throws ServiceException {
-        try {
-            if (request == null) {
-                throw new IllegalArgumentException("Application request cannot be null.");
-            }
+    // @Transactional
+   /* public CandidateApplicationResponse applyForPosition(CandidateApplicationRequest request) {
+        log.info("Processing candidate application for: {}", request.getCandidateName());
+        CandidateApplicationModel model = candidateApplicationMapper.toModel(request);
+        CandidateApplicationDAO candidateDAO = candidateApplicationMapper.toDao(model);
+        candidateApplicationMapper.competenceProfileToDao(model);
+        candidateApplicationMapper.availabilityToDao(model);
+        CompetenceProfileDao competenceProfileDao = candidateApplicationMapper.competenceProfileToDao(model);
 
-            log.info("Processing candidate application for: {}", request.getCandidateName());
+        competenceProfileRepository.save(competenceProfileDao);  // Spara kompetensprofilen
 
-            // Convert request DTO to model
-            CandidateApplicationModel model = candidateApplicationMapper.toModel(request);
+        AvailabilityDao availabilityDao = candidateApplicationMapper.availabilityToDao(model);
 
-            // Convert model to DAO entity for storage
-            CandidateApplicationDAO candidateDAO = candidateApplicationMapper.toDao(model);
+        availabilityRepository.save(availabilityDao);  // Spara tillgängligheten
 
-            // Save application to database
-            CandidateApplicationDAO savedDAO = candidateapplicationrepository.save(candidateDAO);
-            log.info("Candidate application submitted with Person ID: {}", savedDAO.getId());
-
-            // Convert saved entity to response DTO
-            return candidateApplicationMapper.toResponse(savedDAO);
-
-        } catch (MappingException e) {
-            log.error("Mapping error: {}", e.getMessage());
-            throw new ServiceException("Failed to process application due to mapping issues.", e);
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid request: {}", e.getMessage());
-            throw new ServiceException("Invalid application data provided.", e);
-        } catch (Exception e) {
-            log.error("Unexpected error: {}", e.getMessage());
-            throw new ServiceException("An unexpected error occurred while processing the application.", e);
-        }
+        return candidateApplicationMapper.toResponse(candidateDAO);
     }
+} */
+    @Transactional
+    public CandidateApplicationResponse applyForPosition(CandidateApplicationRequest request) {
+        log.info("Processing candidate application for: {}", request.getCandidateName());
+        // Convert request DTO to model
+        CandidateApplicationModel model = candidateApplicationMapper.toModel(request);
+        // Convert model to DAO
+        CandidateApplicationDAO candidateDAO = candidateApplicationMapper.toDao(model);
+        // Step 1: Save Candidate First
+        CandidateApplicationDAO savedCandidate = candidateApplicationRepository.save(candidateDAO);
 
 
-    /**
-     * Retrieves all candidate applications. Restricted to recruiter access.
-     *
-     * @return A list of {@link CandidateApplicationResponse} DTOs representing all applications.
-     */
-    @Transactional(readOnly = true)
-    public List<CandidateApplicationDTO.CandidateApplicationResponse> getAllApplications() {
-        log.info("Fetching all candidate applications (Recruiter Access Only)");
+        CompetenceDao competence = competenceRepository.findBySkills(model.getSkills())
+                .orElseGet(() -> {
+                    CompetenceDao newCompetence = CompetenceDao.builder()
+                            .skills(model.getSkills())
+                            .build();
+                    return competenceRepository.save(newCompetence);
+                });
+        Integer competenceId = competence.getCompetenceId();
 
-        List<CandidateApplicationDAO> applications = candidateapplicationrepository.findAll();
+        // Step 3: Save Competence Profile (Now it knows the correct competenceId)
+        CompetenceProfileDao competenceProfileDao = candidateApplicationMapper.competenceProfileToDao(model, competenceId);
+        competenceProfileDao.setPersonId(savedCandidate.getPersonId());  // Link competence to saved candidate
+        competenceProfileRepository.save(competenceProfileDao);
 
-        return applications.stream()
-                .map(candidateApplicationMapper::toResponse)
-                .collect(Collectors.toList());
+        // Step 4: Save Availability (Now it knows the person ID)
+        AvailabilityDao availabilityDao = candidateApplicationMapper.availabilityToDao(model);
+        availabilityDao.setPersonId(savedCandidate.getPersonId());  // Link availability to saved candidate
+        availabilityRepository.save(availabilityDao);
+
+        log.info("Candidate application submitted successfully with ID: {}", savedCandidate.getPersonId());
+
+        // Step 5: Return response with saved data
+        return candidateApplicationMapper.toResponse(savedCandidate);
     }
 }
