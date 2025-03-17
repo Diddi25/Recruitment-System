@@ -23,5 +23,5 @@ public class CompetenceDao {
     private Integer id;
 
     @Column(name = "name")
-    private String skills;
+    private String name;
 }

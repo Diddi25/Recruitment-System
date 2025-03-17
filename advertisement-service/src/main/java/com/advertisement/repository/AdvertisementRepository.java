@@ -15,8 +15,6 @@ import java.util.Optional;
 @Repository
 public interface AdvertisementRepository extends JpaRepository<AdvertisementDao, Integer> {
 
-
-
     /**
      * Find all competence profiles with detailed information with pagination support.
      *

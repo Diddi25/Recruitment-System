@@ -17,13 +17,14 @@ import java.time.LocalDate;
 @Builder
 public class CandidateApplicationModel {
     private Integer personId;
-    private String skills;
+    private Integer skills;
     private BigDecimal experienceYears;
     private LocalDate availableFrom;
     private LocalDate availableTo;
     private String status;
     private String firstName;
     private String lastName;
+    private Integer competenceId;
 
     // Not stored, but used for parsing
     private String candidateName;

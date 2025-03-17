@@ -25,7 +25,7 @@ public class CandidateApplicationDTO {
     @Data
     public static class CandidateApplicationRequest {
         private String candidateName;
-        private String skills;
+        private Integer skills;
         private BigDecimal experienceYears;
         private LocalDate availableFrom;
         private LocalDate availableTo;

@@ -2,12 +2,10 @@ package com.candidate.service;
 
 import com.candidate.dao.CandidateApplicationDAO;
 import com.candidate.dao.AvailabilityDao;
-import com.candidate.dao.CompetenceDao;
 import com.candidate.dao.CompetenceProfileDao;
 import com.candidate.dao.CandidateApplicationMapper;
 import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationRequest;
 import com.candidate.dto.CandidateApplicationDTO.CandidateApplicationResponse;
-import com.candidate.repository.CandidateApplicationRepository;
 import com.candidate.repository.AvailabilityRepository;
 import com.candidate.repository.CompetenceProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +23,8 @@ import com.candidate.model.CandidateApplicationModel;
 @Slf4j
 public class CandidateApplicationService {
 
-    private final CandidateApplicationRepository candidateApplicationRepository;
     private final AvailabilityRepository availabilityRepository;
     private final CompetenceProfileRepository competenceProfileRepository;
-
     private final CandidateApplicationMapper candidateApplicationMapper;
 
     /**

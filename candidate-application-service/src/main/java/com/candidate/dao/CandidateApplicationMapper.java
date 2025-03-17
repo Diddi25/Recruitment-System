@@ -16,7 +16,6 @@ public class CandidateApplicationMapper {
 
     public CandidateApplicationModel toModel(CandidateApplicationRequest request) {
         String[] nameParts = NameUtils.parseFullName(request.getCandidateName());
-        log.info("SENT TO MODEL" + request.toString());
         return CandidateApplicationModel.builder()
                 .firstName(nameParts[0])  // Extract first name, then last name
                 .lastName(nameParts[1])
@@ -43,7 +42,6 @@ public class CandidateApplicationMapper {
                                 .build() : null)
                 .competence(model.getSkills() != null ?
                         CompetenceDao.builder()
-                                .skills(model.getSkills())
                                 .build() : null)
                 .competenceProfileDao(model.getExperienceYears() != null ?
                         CompetenceProfileDao.builder()
@@ -56,7 +54,7 @@ public class CandidateApplicationMapper {
 
     public CompetenceDao competenceToDao(CandidateApplicationModel model) {
         return CompetenceDao.builder()
-                .skills(model.getSkills())
+                .id(model.getSkills())
                 .build();
     }
 
@@ -65,7 +63,7 @@ public class CandidateApplicationMapper {
                 .experienceYears(model.getExperienceYears())
                 .status(model.getStatus())
                 .personId(model.getPersonId())
-                .competenceId(2) //This should be fixed
+                .competenceId(model.getSkills())
                 .build();
     }
 
