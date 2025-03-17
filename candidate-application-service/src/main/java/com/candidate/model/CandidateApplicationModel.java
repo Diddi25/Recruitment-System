@@ -3,6 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -14,10 +16,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class CandidateApplicationModel {
-    private int id;
-    private String candidateName;
-    private String skills;
-    private int experienceYears;
+    private Integer personId;
+    private Integer skills;
+    private BigDecimal experienceYears;
     private LocalDate availableFrom;
     private LocalDate availableTo;
+    private String status;
+    private String firstName;
+    private String lastName;
+    private Integer competenceId;
+
+    // Not stored, but used for parsing
+    private String candidateName;
 }

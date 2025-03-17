@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.*;
 
 
 /**
@@ -91,7 +92,7 @@ public class AdvertisementController {
     @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public ResponseEntity<List<AdvertisementResponse>> getAdvertisementsByPersonId(@PathVariable Integer personId) {
         log.info("Getting advertisements for person with id: {}", personId);
-        List<Advertisement> advertisements = advertisementService.getAdvertisementsByPersonId(personId);
+        List<Advertisement> advertisements = (advertisementService.getAdvertisementsByPersonId(personId));
         return ResponseEntity.ok(advertisementMapper.toResponseList(advertisements));
     }
 

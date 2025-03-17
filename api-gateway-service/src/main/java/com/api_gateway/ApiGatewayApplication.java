@@ -61,7 +61,7 @@ public class ApiGatewayApplication {
 									}
 									return chain.filter(exchange);
 								})
-							 	.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
+								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
 						.uri("http://localhost:8083"))
 				.route("candidate_application_service", r -> r

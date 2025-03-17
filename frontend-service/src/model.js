@@ -6,8 +6,8 @@ import store from './store/storeIndex.js';
  */
 export default{
     
-    user: {username: null, password: null, isLoggedIn: null, role: null}, //user information used to render Views
-    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input validation flags
+    user: {username: null, password: null, isLoggedIn: null, role: null, id: null}, //user information used to render Views
+    flags: {incorrectLoginCredentials: false, usernameAlreadyExists: null}, //input flags
     errorMessages: {registerSubmission: null, loginSubmission: null, applicationSubmission: null}, //contains all possible error messages
 
     advertisementContent: [], // Actual list of advertisements (from content array)
@@ -159,6 +159,7 @@ export default{
      * @returns 
      */
     async submitApplication(formData) {
+        formData.personId = this.user.id;
         try {
             const response = await candidateApplicationService.applyForPosition(formData);
         } catch (error) {
@@ -210,6 +211,9 @@ export default{
 
         if(usr.roles[0]) {
             this.user.role = usr.roles[0];
+        }
+        if(usr.id) {
+            this.user.id = usr.id;
         }
         this.user.isLoggedIn = true;
     },
