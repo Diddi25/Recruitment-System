@@ -39,8 +39,10 @@ public class CandidateApplicationService {
         log.info("Processing candidate application for: {}", request.getCandidateName());
         CandidateApplicationModel model = candidateApplicationMapper.toModel(request);
         CandidateApplicationDAO candidateDAO = candidateApplicationMapper.toDao(model);
-        candidateApplicationMapper.competenceProfileToDao(model);
-        candidateApplicationMapper.availabilityToDao(model);
+        CompetenceProfileDao competenceProfile = candidateApplicationMapper.competenceProfileToDao(model);
+        AvailabilityDao availability = candidateApplicationMapper.availabilityToDao(model);
+        availabilityRepository.save(availability);
+        competenceProfileRepository.save(competenceProfile);
         return candidateApplicationMapper.toResponse(candidateDAO);
     }
 }
