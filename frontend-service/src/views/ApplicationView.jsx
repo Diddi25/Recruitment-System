@@ -35,7 +35,7 @@ export default function ApplicationView(props) {
                 <label>Competence Profile:</label><br />
                 <select v-model={formData.skills} required>
                 <option value="">Select a position</option>
-                {competenceOptions.map((comp) => (
+                {props.competenceOptions.map((comp) => (
                   <option key={comp.id} value={comp.id}>{comp.name}</option>
                 ))}
                 </select>
