@@ -42,7 +42,7 @@ export default function LoginView(props) {
     }
 
     function isPasswordValid(password) {
-        if(password.length > 256 || password.length < 6) {
+        if(password.length > 256 || password.length < 3) {
             return false;
         }
         return true;
