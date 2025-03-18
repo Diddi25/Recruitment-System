@@ -49,7 +49,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://localhost:8082"))
+						.uri("http://advertisement:8082"))
 				.route("identification_service", r -> r
 						.path("/api/identification/**", "/api/identification")
 						.filters(f -> f
@@ -63,7 +63,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://localhost:8083"))
+						.uri("http://identification:8083"))
 				.route("candidate_application_service", r -> r
 						.path("/api/applications/**", "/api/applications") // Matches all requests to CandidateApplicationController
 						.filters(f -> f
@@ -77,7 +77,7 @@ public class ApiGatewayApplication {
 								})
 								.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:5173")
 						)
-						.uri("http://localhost:8084")) // Forward requests to Candidate Application Service at port 8084
+						.uri("http://candidate:8084")) // Forward requests to Candidate Application Service at port 8084
 				.build();
 	}
 
