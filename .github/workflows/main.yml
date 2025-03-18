@@ -235,7 +235,7 @@ jobs:
               ports:
                 - "80:80"
               environment:
-                - VITE_API_URL=http://ec2-13-60-239-103.eu-north-1.compute.amazonaws.com/api
+                - VITE_API_URL=/api
               
             api-gateway:
               image: ${DOCKERHUB_USERNAME}/gateway:latest
