@@ -271,5 +271,8 @@ export default{
         if(usr.roles[0]) {
             this.user.role = usr.roles[0];
         }
+        if(usr.id) {
+            this.user.id = usr.id;
+        }
     },
 }
