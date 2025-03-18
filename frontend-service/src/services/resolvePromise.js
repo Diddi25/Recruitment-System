@@ -5,7 +5,7 @@ import authHeader from './authHeader';
  * Used to access the API gateway service.
  */
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8081/api', 
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
