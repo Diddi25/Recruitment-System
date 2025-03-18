@@ -1,5 +1,6 @@
 package com.candidate.exception;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(MappingException.class)
-    public ResponseEntity<String> handleMappingException(MappingException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<Map<String, String>> handleDatabaseException(DatabaseException ex) {
         log.error("Database error: {}", ex.getMessage(), ex);
@@ -30,5 +26,11 @@ public class CustomExceptionHandler {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "An unexpected error occurred."));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidJson(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Invalid request body. Please provide valid JSON data."));
     }
 }
