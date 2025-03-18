@@ -18,19 +18,19 @@ public class CustomExceptionHandler {
     public ResponseEntity<Map<String, String>> handleDatabaseException(DatabaseException ex) {
         log.error("Database error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "A database error occurred. Please try again later."));
+                .body(Map.of("message", "A database error occurred. Please try again later."));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "An unexpected error occurred."));
+                .body(Map.of("message", "An unexpected error occurred."));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, String>> handleInvalidJson(HttpMessageNotReadableException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Invalid request body. Please provide valid JSON data."));
+                .body(Map.of("message", "Invalid request body. Please provide valid JSON data."));
     }
 }
