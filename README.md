@@ -9,9 +9,13 @@ Disclaimers:
 
 Test credentials: 
 
+ROLE: Recruiter
+
 username: recruiter 
 
 password: recruiter 
+
+ROLE: Candidate
 
 username: candidate 
 
