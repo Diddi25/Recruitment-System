@@ -7,12 +7,12 @@ Disclaimers:
 - The retrieval can take up to 10 seconds
 - All new registered users have the applicant as default role
 
-Test credentials:
-username: recruiter
-password: recruiter
+Test credentials: ␣␣
+username: recruiter ␣␣
+password: recruiter ␣␣
 
-username: candidate
-password: candidate
+username: candidate ␣␣
+password: candidate ␣␣
 
 http://ec2-16-170-220-41.eu-north-1.compute.amazonaws.com
 
